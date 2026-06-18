@@ -1,0 +1,64 @@
+// LaunchpadFactory ABI (minimal — for frontend use)
+export const FACTORY_ABI = [
+  {
+    inputs: [
+      { name: "salt", type: "bytes32" },
+      { name: "name", type: "string" },
+      { name: "symbol", type: "string" },
+      { name: "totalSupply", type: "uint256" },
+      { name: "launchDate", type: "uint256" },
+      { name: "creator", type: "address" },
+    ],
+    name: "precomputeTokenAddress",
+    outputs: [{ name: "predictedToken", type: "address" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      { name: "name", type: "string" },
+      { name: "symbol", type: "string" },
+      { name: "totalSupply", type: "uint256" },
+      { name: "basePrice", type: "uint256" },
+      { name: "slope", type: "uint256" },
+      { name: "graduationCap", type: "uint256" },
+      { name: "salt", type: "bytes32" },
+      { name: "launchDate", type: "uint256" },
+    ],
+    name: "createLaunch",
+    outputs: [
+      { name: "token", type: "address" },
+      { name: "bondingCurve", type: "address" },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [{ name: "salt", type: "bytes32" }],
+    name: "saltUsed",
+    outputs: [{ name: "", type: "bool" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "platformWallet",
+    outputs: [{ name: "", type: "address" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "dexRouter",
+    outputs: [{ name: "", type: "address" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "paused",
+    outputs: [{ name: "", type: "bool" }],
+    stateMutability: "view",
+    type: "function",
+  },
+] as const;

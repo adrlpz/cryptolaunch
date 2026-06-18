@@ -1,0 +1,167 @@
+=== PRISMA ===
+
+✔ Generated Prisma Client (7.8.0) to .\app\generated\prisma in 106ms
+
+
+=== HARDHAT ===
+◇ injected env (14) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+◇ injected env (14) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+Compiled 13 Solidity files successfully (evm target: paris).
+
+=== HARDHAT TESTS ===
+◇ injected env (14) from .env // tip: ⌘ suppress logs { quiet: true }
+
+
+  BondingCurve
+    Deployment
+      ✔ should set immutable token
+      ✔ should set basePrice, slope, graduationCap
+      ✔ should set platform and creator
+      ✔ should not be graduated initially
+      ✔ should initialize tokenBalance
+      ✔ should revert if token is address(0)
+      ✔ should revert if basePrice is 0
+    buy
+      ✔ should transfer tokens to buyer
+      ✔ should update totalSold and totalRaised
+      ✔ should deduct 1% fee
+      ✔ should emit TokenPurchased event
+      ✔ should revert if no ETH sent
+      ✔ should revert if paused
+      ✔ should revert if graduated
+      ✔ should increase price as more tokens are sold
+    buyExact
+      ✔ should buy exact token amount
+      ✔ should refund excess ETH
+      ✔ should revert if tokenAmount is 0
+    sell
+      ✔ should return ETH to seller
+      ✔ should update totalSold and tokenBalance
+      ✔ should emit TokenSold event
+      ✔ should revert if tokenAmount is 0
+      ✔ should revert if exceeds sold amount
+      ✔ should revert if graduated
+    Graduation
+      ✔ should graduate when totalRaised >= graduationCap
+      ✔ should emit Graduated event
+      ✔ should report canGraduate correctly
+      ✔ should cap graduationProgress at 10000
+      ✔ should allow owner to withdrawForLiquidity after graduation
+      ✔ should revert withdrawForLiquidity if not graduated
+      ✔ should revert withdrawForLiquidity from non-owner
+    Fee Split
+      ✔ should split fee 50/50 between creator and platform
+    View Functions
+      ✔ should return currentPrice
+      ✔ should estimate tokens for ETH
+      ✔ should estimate ETH for tokens
+      ✔ should return graduationProgress
+    Emergency Timelock
+      ✔ should initiate emergency with 48h timelock
+      ✔ should revert emergencyWithdraw before timelock expires
+      ✔ should allow emergencyWithdraw after 48h
+      ✔ should reset timelock after use
+      ✔ should revert initiateEmergency if not paused
+      ✔ should revert double initiate
+    Admin
+      ✔ should allow owner to toggle pause
+      ✔ should allow owner to set platform wallet
+      ✔ should revert setPlatformWallet with address(0)
+      ✔ should revert admin from non-owner
+    No receive()
+      ✔ should revert on direct ETH transfer
+    Fee Accounting
+      ✔ should track totalRaised consistently after buy+sell
+
+  LaunchpadFactory
+    Deployment
+      ✔ should set platform wallet and dex router
+      ✔ should revert if platform wallet is address(0)
+      ✔ should start unpaused
+    createLaunch
+      ✔ should deploy token + bonding curve
+      ✔ should distribute 80% tokens to bonding curve
+      ✔ should transfer token ownership to creator
+      ✔ should store launch info
+      ✔ should track creator launches
+      ✔ should increment launch count
+      ✔ should revert if name is empty
+      ✔ should revert if name > 50 chars
+      ✔ should revert if symbol > 10 chars
+      ✔ should revert if supply < MIN_SUPPLY
+      ✔ should revert if basePrice < MIN_BASE_PRICE
+      ✔ should revert if slope is 0
+      ✔ should revert if graduationCap < MIN_GRADUATION_CAP
+      ✔ should revert if launchDate is in the past
+      ✔ should revert if salt is reused
+      ✔ should revert if creator exceeds max launches
+    precomputeTokenAddress
+      ✔ should return deterministic address
+      ✔ should return different address for different salt
+    getAllLaunches
+      ✔ should return paginated launches
+      ✔ should return empty for out-of-bounds offset
+    Admin
+      ✔ should allow owner to toggle pause
+      ✔ should block createLaunch when paused
+      ✔ should allow owner to set platform wallet
+      ✔ should emit PlatformWalletUpdated
+      ✔ should revert setPlatformWallet with address(0)
+      ✔ should allow owner to set dex router
+      ✔ should revert admin functions from non-owner
+    CREATE2 Vanity
+      ✔ should deploy token at predicted address
+
+  LaunchpadToken
+    Deployment
+      ✔ should set name, symbol, maxSupply correctly
+      ✔ should set creator as immutable
+      ✔ should set platform wallet
+      ✔ should mint total supply to deployer (owner)
+      ✔ should set launchDate and creatorUnlockDate
+      ✔ should revert if maxSupply is 0
+      ✔ should revert if platform wallet is address(0)
+      ✔ should revert if creator is address(0)
+    Vesting
+      ✔ should block creator from transferring before unlock date
+      ✔ should allow platform wallet to transfer freely
+      ✔ should allow non-creator to transfer freely
+      ✔ should report isCreatorUnlocked correctly
+      ✔ should report creatorVestingRemaining > 0 before unlock
+    Vesting Exemptions
+      ✔ should allow owner to add vesting exempt
+      ✔ should not allow exempting creator
+      ✔ should allow owner to remove vesting exempt
+      ✔ should not allow removing platform exemption
+    markInitialized
+      ✔ should set initialized and exempt platform
+      ✔ should only be callable once
+    setPlatformWallet
+      ✔ should allow platform wallet to update itself
+      ✔ should revert if caller is not platform wallet
+      ✔ should revert if new wallet is address(0)
+      ✔ should revert if new wallet is creator
+      ✔ should update vesting exemptions
+    burn
+      ✔ should burn tokens and reduce balance
+      ✔ should revert if amount is 0
+      ✔ should revert if insufficient balance
+    CREATE2 Address
+      ✔ should have deterministic address via factory
+
+
+  107 passing (2s)
+
+
+=== VITEST ===
+
+ RUN  v4.1.9 D:/claude/launchpad
+
+
+ Test Files  5 passed (5)
+      Tests  144 passed (144)
+   Start at  21:21:47
+   Duration  2.42s (transform 170ms, setup 0ms, import 2.38s, tests 3.50s, environment 1ms)
+
+
+=== TSC ===

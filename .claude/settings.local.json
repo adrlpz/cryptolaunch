@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//d/claude/**)",
+      "Bash(npx create-next-app@latest launchpad-tmp --typescript --tailwind --eslint --app --src-dir=false --import-alias=\"@/*\" --use-npm --no-turbopack)",
+      "Bash(cp *)",
+      "Bash(npx prisma *)",
+      "Bash(DEBUG=* npx prisma validate)",
+      "Bash(npm run *)",
+      "Bash(npm install *)",
+      "Bash(npx next *)",
+      "Bash(echo \"Exit code: $?\")",
+      "Read(//d//**)",
+      "Read(//d/.claude/**)",
+      "Read(//c/Users/drees/.claude/agent/skills/**)",
+      "Read(//c/Users/drees/.claude/**)",
+      "Read(//d/claude/launchpad/**)",
+      "Bash(npm list *)",
+      "Bash(npx hardhat *)"
+    ]
+  }
+}

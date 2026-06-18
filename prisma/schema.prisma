@@ -1,0 +1,243 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================================
+// USERS
+// ============================================================
+model User {
+  id                String   @id @default(uuid()) @db.Uuid
+  walletAddress     String   @unique @map("wallet_address") @db.VarChar(42)
+  email             String?  @db.VarChar(255)
+  balance           Decimal  @default(0) @db.Decimal(20, 8)
+  totalMarginDebt   Decimal  @default(0) @map("total_margin_debt") @db.Decimal(20, 8)
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  marginPositions   MarginPosition[]
+  liquidationLogs   LiquidationLog[]
+  tokenLaunches     TokenLaunch[]
+
+  @@map("users")
+}
+
+// ============================================================
+// LAUNCHPAD PROJECTS
+// ============================================================
+model LaunchpadProject {
+  id                    String   @id @default(uuid()) @db.Uuid
+  launchId              String?  @unique @map("launch_id") @db.Uuid
+  tokenName             String   @map("token_name") @db.VarChar(50)
+  tokenSymbol           String   @map("token_symbol") @db.VarChar(10)
+  contractAddress       String?  @map("contract_address") @db.VarChar(42)
+  tokenPrice            Decimal  @map("token_price") @db.Decimal(20, 8)
+  totalSupply           Decimal  @map("total_supply") @db.Decimal(30, 8)
+  availableSupply       Decimal  @map("available_supply") @db.Decimal(30, 8)
+  chain                 String   @db.VarChar(50)
+  maxLeveragePercent    Int      @default(50) @map("max_leverage_percent")
+  marginFeePercent      Decimal  @default(5.00) @map("margin_fee_percent") @db.Decimal(5, 2)
+  safetyMarginPercent   Decimal  @default(5.00) @map("safety_margin_percent") @db.Decimal(5, 2)
+
+  // LP info
+  lpStatus              String   @default("none") @map("lp_status") @db.VarChar(20)
+  lpContractAddress     String?  @map("lp_contract_address") @db.VarChar(42)
+  dexName               String?  @map("dex_name") @db.VarChar(30)
+
+  status                String   @default("upcoming") @db.VarChar(20)
+  launchDate            DateTime @map("launch_date")
+  endDate               DateTime? @map("end_date")
+  createdAt             DateTime @default(now()) @map("created_at")
+
+  // Relations
+  launch                TokenLaunch? @relation(fields: [launchId], references: [id])
+  liquidityPool         LiquidityPool?
+  marginPositions       MarginPosition[]
+  whitelistEntries      Whitelist[]
+
+  @@map("launchpad_projects")
+}
+
+// ============================================================
+// LIQUIDITY POOLS (Bonding Curve)
+// ============================================================
+model LiquidityPool {
+  id                    String   @id @default(uuid()) @db.Uuid
+  projectId             String   @unique @map("project_id") @db.Uuid
+  chain                 String   @db.VarChar(50)
+  poolAddress           String?  @map("pool_address") @db.VarChar(42)
+
+  // Bonding curve
+  basePrice             Decimal? @map("base_price") @db.Decimal(20, 12)
+  slope                 Decimal? @db.Decimal(20, 15)
+  graduationCap         Decimal? @map("graduation_cap") @db.Decimal(20, 8)
+  currentReserveToken   Decimal  @default(0) @map("current_reserve_token") @db.Decimal(30, 8)
+  currentReserveNative  Decimal  @default(0) @map("current_reserve_native") @db.Decimal(20, 8)
+  totalSold             Decimal  @default(0) @map("total_sold") @db.Decimal(30, 8)
+  totalRaised           Decimal  @default(0) @map("total_raised") @db.Decimal(20, 8)
+  isGraduated           Boolean  @default(false) @map("is_graduated")
+
+  // DEX (after graduation)
+  dexName               String?  @map("dex_name") @db.VarChar(30)
+  dexPairAddress        String?  @map("dex_pair_address") @db.VarChar(42)
+  lpTokenAddress        String?  @map("lp_token_address") @db.VarChar(42)
+  tokenReserve          Decimal? @db.Decimal(30, 8)
+  nativeReserve         Decimal? @db.Decimal(20, 8)
+
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  project               LaunchpadProject @relation(fields: [projectId], references: [id])
+
+  @@map("liquidity_pools")
+}
+
+// ============================================================
+// MARGIN POSITIONS
+// ============================================================
+model MarginPosition {
+  id                  String   @id @default(uuid()) @db.Uuid
+  userId              String   @map("user_id") @db.Uuid
+  projectId           String   @map("project_id") @db.Uuid
+  modal               Decimal  @db.Decimal(20, 8)
+  leveragePercent     Int      @map("leverage_percent")
+  debtAmount          Decimal  @map("debt_amount") @db.Decimal(20, 8)
+  feeAmount           Decimal  @map("fee_amount") @db.Decimal(20, 8)
+  totalCost           Decimal  @map("total_cost") @db.Decimal(20, 8)
+  coinsPurchased      Decimal  @map("coins_purchased") @db.Decimal(30, 8)
+  purchasePrice       Decimal  @map("purchase_price") @db.Decimal(20, 8)
+  liquidationPrice    Decimal  @map("liquidation_price") @db.Decimal(20, 8)
+  safetyMargin        Decimal  @map("safety_margin") @db.Decimal(20, 8)
+  status              String   @default("open") @db.VarChar(20)
+  pnl                 Decimal  @default(0) @db.Decimal(20, 8)
+  openedAt            DateTime @default(now()) @map("opened_at")
+  closedAt            DateTime? @map("closed_at")
+  liquidatedAt        DateTime? @map("liquidated_at")
+
+  // Relations
+  user                User             @relation(fields: [userId], references: [id])
+  project             LaunchpadProject @relation(fields: [projectId], references: [id])
+  liquidationLogs     LiquidationLog[]
+
+  @@map("margin_positions")
+}
+
+// ============================================================
+// LIQUIDATION LOGS
+// ============================================================
+model LiquidationLog {
+  id              String   @id @default(uuid()) @db.Uuid
+  positionId      String   @map("position_id") @db.Uuid
+  userId          String   @map("user_id") @db.Uuid
+  triggerPrice    Decimal  @map("trigger_price") @db.Decimal(20, 8)
+  coinsSold       Decimal  @map("coins_sold") @db.Decimal(30, 8)
+  saleProceeds    Decimal  @map("sale_proceeds") @db.Decimal(20, 8)
+  debtRepaid      Decimal  @map("debt_repaid") @db.Decimal(20, 8)
+  userRefund      Decimal? @map("user_refund") @db.Decimal(20, 8)
+  platformLoss    Decimal  @default(0) @map("platform_loss") @db.Decimal(20, 8)
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  // Relations
+  position        MarginPosition @relation(fields: [positionId], references: [id])
+  user            User           @relation(fields: [userId], references: [id])
+
+  @@map("liquidation_logs")
+}
+
+// ============================================================
+// TOKEN LAUNCHES
+// ============================================================
+model TokenLaunch {
+  id                    String   @id @default(uuid()) @db.Uuid
+  creatorId             String   @map("creator_id") @db.Uuid
+  projectId             String?  @map("project_id") @db.Uuid
+
+  // Token info
+  tokenName             String   @map("token_name") @db.VarChar(50)
+  tokenSymbol           String   @map("token_symbol") @db.VarChar(10)
+  decimals              Int      @default(18)
+  totalSupply           Decimal  @map("total_supply") @db.Decimal(30, 8)
+  description           String?  @db.Text
+  logoUrl               String?  @map("logo_url") @db.VarChar(500)
+  websiteUrl            String?  @map("website_url") @db.VarChar(500)
+  socialLinks           Json?    @map("social_links")
+
+  // Launch config
+  basePrice             Decimal  @map("base_price") @db.Decimal(20, 12)
+  graduationCap         Decimal  @map("graduation_cap") @db.Decimal(20, 8)
+  launchDate            DateTime @map("launch_date")
+  maxLeveragePercent    Int      @default(50) @map("max_leverage_percent")
+
+  // Vanity address
+  vanitySuffix          String   @default("51131") @map("vanity_suffix") @db.VarChar(10)
+  contractAddress       String?  @map("contract_address") @db.VarChar(42)
+  vanityGeneratedAt     DateTime? @map("vanity_generated_at")
+
+  // Deployment
+  deployTxHash          String?  @map("deploy_tx_hash") @db.VarChar(66)
+  deployedAt            DateTime? @map("deployed_at")
+  network               String   @default("bsc") @db.VarChar(50)
+
+  // Fee
+  deployFeeNative       Decimal? @map("deploy_fee_native") @db.Decimal(20, 8)
+  deployFeePaid         Boolean  @default(false) @map("deploy_fee_paid")
+  platformFeePercent    Decimal  @default(5.00) @map("platform_fee_percent") @db.Decimal(5, 2)
+  platformFeeAmount     Decimal? @map("platform_fee_amount") @db.Decimal(20, 8)
+
+  // Status
+  status                String   @default("pending") @db.VarChar(20)
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  creator               User @relation(fields: [creatorId], references: [id])
+  project               LaunchpadProject?
+  vanityJobs            VanityJob[]
+
+  @@map("token_launches")
+}
+
+// ============================================================
+// VANITY ADDRESS JOBS
+// ============================================================
+model VanityJob {
+  id                  String   @id @default(uuid()) @db.Uuid
+  launchId            String   @map("launch_id") @db.Uuid
+  targetSuffix        String   @map("target_suffix") @db.VarChar(10)
+  attempts            BigInt   @default(0)
+  maxAttempts         BigInt   @default(10000000) @map("max_attempts")
+  foundAddress        String?  @map("found_address") @db.VarChar(42)
+  status              String   @default("running") @db.VarChar(20)
+  startedAt           DateTime @default(now()) @map("started_at")
+  completedAt         DateTime? @map("completed_at")
+  workerId            String?  @map("worker_id") @db.VarChar(50)
+
+  // Relations
+  launch              TokenLaunch @relation(fields: [launchId], references: [id])
+
+  @@map("vanity_jobs")
+}
+
+// ============================================================
+// WHITELIST (Early Access)
+// ============================================================
+model Whitelist {
+  id              String   @id @default(uuid()) @db.Uuid
+  projectId       String   @map("project_id") @db.Uuid
+  walletAddress   String   @map("wallet_address") @db.VarChar(42)
+  maxAllocation   Decimal? @map("max_allocation") @db.Decimal(20, 8)  // max token yang bisa dibeli
+  addedBy         String?  @map("added_by") @db.VarChar(42)
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  // Relations
+  project         LaunchpadProject @relation(fields: [projectId], references: [id])
+
+  @@unique([projectId, walletAddress])
+  @@map("whitelists")
+}
