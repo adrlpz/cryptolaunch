@@ -86,8 +86,8 @@ model LiquidityPool {
   dexName               String?  @map("dex_name") @db.VarChar(30)
   dexPairAddress        String?  @map("dex_pair_address") @db.VarChar(42)
   lpTokenAddress        String?  @map("lp_token_address") @db.VarChar(42)
-  tokenReserve          Decimal? @db.Decimal(30, 8)
-  nativeReserve         Decimal? @db.Decimal(20, 8)
+  tokenReserve          Decimal? @map("token_reserve") @db.Decimal(30, 8)
+  nativeReserve         Decimal? @map("native_reserve") @db.Decimal(20, 8)
 
   createdAt             DateTime @default(now()) @map("created_at")
   updatedAt             DateTime @updatedAt @map("updated_at")
