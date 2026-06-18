@@ -61,4 +61,19 @@ export const FACTORY_ABI = [
     stateMutability: "view",
     type: "function",
   },
+  {
+    anonymous: false,
+    inputs: [
+      { indexed: true, name: "token", type: "address" },
+      { indexed: true, name: "bondingCurve", type: "address" },
+      { indexed: true, name: "creator", type: "address" },
+      { indexed: false, name: "tokenName", type: "string" },
+      { indexed: false, name: "tokenSymbol", type: "string" },
+      { indexed: false, name: "totalSupply", type: "uint256" },
+      { indexed: false, name: "basePrice", type: "uint256" },
+      { indexed: false, name: "graduationCap", type: "uint256" },
+    ],
+    name: "LaunchCreated",
+    type: "event",
+  },
 ] as const;
