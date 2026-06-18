@@ -12,6 +12,12 @@ export async function GET(
       where: { id },
       include: {
         liquidityPool: true,
+        launch: {
+          select: {
+            id: true,
+            contractAddress: true,
+          },
+        },
       },
     });
 
@@ -22,7 +28,13 @@ export async function GET(
       );
     }
 
-    return NextResponse.json({ success: true, data: project });
+    // bondingCurveAddress not stored directly — pool address is the curve
+    const data = {
+      ...project,
+      bondingCurveAddress: project.liquidityPool?.poolAddress ?? null,
+    };
+
+    return NextResponse.json({ success: true, data });
   } catch (error) {
     console.error("Error fetching project:", error);
     return NextResponse.json(

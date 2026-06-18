@@ -57,6 +57,7 @@ export default function LaunchPage() {
   >("form");
   const [precompute, setPrecompute] = useState<PrecomputeResponse | null>(null);
   const [txHash, setTxHash] = useState<string | null>(null);
+  const [projectId, setProjectId] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -173,6 +174,7 @@ export default function LaunchPage() {
 
       const confirmData = await confirmRes.json();
       if (confirmData.success) {
+        setProjectId(confirmData.data?.projectId ?? null);
         setStep("done");
       } else {
         setError(`Confirm failed: ${confirmData.error}`);
@@ -535,7 +537,7 @@ export default function LaunchPage() {
             {precompute.predictedAddress}
           </div>
           <a
-            href={`/projects/${precompute.launchId}`}
+            href={`/projects/${projectId ?? precompute.launchId}`}
             className="inline-block rounded-lg bg-gradient-to-r from-purple-500 to-blue-600 px-6 py-2 text-sm font-medium text-white"
           >
             View Project →

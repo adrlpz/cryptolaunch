@@ -204,6 +204,7 @@ export async function POST(
       data: {
         projectId: project.id,
         chain: launch.network,
+        poolAddress: deployedCurve,
         basePrice: Number(launch.basePrice),
         slope,
         graduationCap: Number(launch.graduationCap),

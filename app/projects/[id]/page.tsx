@@ -27,7 +27,6 @@ interface Project {
   tokenName: string;
   tokenSymbol: string;
   contractAddress: string | null;
-  bondingCurveAddress: string | null;
   tokenPrice: number;
   totalSupply: number;
   availableSupply: number;
@@ -37,6 +36,7 @@ interface Project {
   status: string;
   launchDate: string;
   liquidityPool: PoolData | null;
+  bondingCurveAddress?: string | null;
 }
 
 export default function ProjectDetailPage() {
