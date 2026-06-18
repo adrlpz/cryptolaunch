@@ -47,7 +47,7 @@ export default function LaunchPage() {
     twitterUrl: "",
     telegramUrl: "",
     targetChain: "sepolia",
-    basePrice: "0.0001",
+    basePrice: "5e-6", // auto: cap(40) / supply(1000000) / 2
     graduationCap: "40",
     launchDate: "",
     maxLeverage: 50,
@@ -285,22 +285,65 @@ export default function LaunchPage() {
             <h2 className="mb-4 text-lg font-bold">Bonding Curve</h2>
             <div className="grid gap-4 md:grid-cols-2">
               <div>
-                <label className="mb-1.5 block text-sm text-zinc-400">Base Price (ETH) *</label>
-                <input
-                  type="text"
-                  value={form.basePrice}
-                  onChange={(e) => setForm({ ...form, basePrice: e.target.value })}
-                  className="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-4 py-2.5 text-white outline-none focus:border-purple-500"
-                />
-              </div>
-              <div>
                 <label className="mb-1.5 block text-sm text-zinc-400">Graduation Cap (ETH) *</label>
                 <input
                   type="text"
                   value={form.graduationCap}
-                  onChange={(e) => setForm({ ...form, graduationCap: e.target.value })}
+                  onChange={(e) => {
+                    const cap = e.target.value;
+                    const supply = Number(form.totalSupply);
+                    const capNum = Number(cap);
+                    let newBasePrice = form.basePrice;
+                    if (supply > 0 && capNum > 0) {
+                      // basePrice = cap / supply / 2 (half of max to ensure slope > 0)
+                      newBasePrice = (capNum / supply / 2).toExponential(2);
+                    }
+                    setForm({ ...form, graduationCap: cap, basePrice: newBasePrice });
+                  }}
                   className="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-4 py-2.5 text-white outline-none focus:border-purple-500"
+                  placeholder="10"
                 />
+              </div>
+              <div>
+                <label className="mb-1.5 block text-sm text-zinc-400">
+                  Base Price (ETH) *
+                  <span className="ml-2 text-xs text-zinc-600">auto-calculated</span>
+                </label>
+                <input
+                  type="text"
+                  value={form.basePrice}
+                  readOnly
+                  className="w-full rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-2.5 text-zinc-400 outline-none"
+                />
+              </div>
+              <div className="md:col-span-2">
+                <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-3 text-xs text-zinc-500">
+                  <div className="flex justify-between">
+                    <span>Formula:</span>
+                    <span className="text-zinc-400">slope = 2 × (cap - basePrice × supply) / supply²</span>
+                  </div>
+                  <div className="mt-1 flex justify-between">
+                    <span>Estimated slope:</span>
+                    <span className="text-purple-400">
+                      {(() => {
+                        const cap = Number(form.graduationCap);
+                        const supply = Number(form.totalSupply);
+                        const bp = Number(form.basePrice);
+                        if (supply > 0 && cap > 0 && bp > 0) {
+                          const slope = 2 * (cap - bp * supply) / (supply * supply);
+                          return slope > 0 ? slope.toExponential(4) : "⚠️ Invalid (cap too low)";
+                        }
+                        return "—";
+                      })()}
+                    </span>
+                  </div>
+                  <div className="mt-1 flex justify-between">
+                    <span>Graduation at ~</span>
+                    <span className="text-green-400">
+                      {form.graduationCap ? `${form.graduationCap} ETH raised` : "—"}
+                    </span>
+                  </div>
+                </div>
               </div>
               <div>
                 <label className="mb-1.5 block text-sm text-zinc-400">Launch Date *</label>
