@@ -5,6 +5,7 @@ import { ethers } from "ethers";
 import { FACTORY_ABI } from "@/lib/factory-abi";
 
 const CHAINS = [
+  { id: "sepolia", name: "Sepolia Testnet", icon: "🧪" },
   { id: "ethereum", name: "Ethereum", icon: "🔷" },
   { id: "arbitrum", name: "Arbitrum", icon: "🔵" },
   { id: "base", name: "Base", icon: "⬜" },
@@ -45,7 +46,7 @@ export default function LaunchPage() {
     websiteUrl: "",
     twitterUrl: "",
     telegramUrl: "",
-    targetChain: "ethereum",
+    targetChain: "sepolia",
     basePrice: "0.0001",
     graduationCap: "40",
     launchDate: "",
