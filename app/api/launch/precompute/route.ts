@@ -148,6 +148,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Convert scientific notation to decimal strings for ethers.parseEther
+    const toDecimal = (v: number): string => {
+      // For very small numbers, use BigInt wei conversion
+      if (v < 1) {
+        const wei = BigInt(Math.round(v * 1e18));
+        return ethers.formatEther(wei);
+      }
+      return v.toFixed(18).replace(/\.?0+$/, "");
+    };
+
+    const basePriceWei = ethers.parseEther(toDecimal(basePriceNum));
+    const slopeWei = ethers.parseEther(toDecimal(slope));
+    const graduationCapWei = ethers.parseEther(graduationCap.toString());
+
     // Generate vanity salt (local compute — no RPC calls)
     const startTime = Date.now();
     let vanity;
@@ -218,9 +232,9 @@ export async function POST(request: NextRequest) {
           name: tokenName,
           symbol: tokenSymbol,
           totalSupply: ethers.parseEther(totalSupply.toString()).toString(),
-          basePrice: ethers.parseEther(basePrice.toString()).toString(),
-          slope: ethers.parseEther(slope.toString()).toString(),
-          graduationCap: ethers.parseEther(graduationCap.toString()).toString(),
+          basePrice: basePriceWei.toString(),
+          slope: slopeWei.toString(),
+          graduationCap: graduationCapWei.toString(),
           launchDate: launchDateTs.toString(),
         },
       },
