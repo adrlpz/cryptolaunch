@@ -2,7 +2,7 @@
 # CryptoLaunch — Multi-stage Docker build (optimized)
 # ============================================================
 
-# Stage 1: Install dependencies + generate Prisma
+# Stage 1: Install all deps + generate Prisma
 FROM node:20-alpine AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
@@ -30,8 +30,7 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 
-# Prisma: generated client + CLI (from deps stage, no re-install)
-COPY --from=deps /app/node_modules/.prisma ./node_modules/.prisma
+# Prisma: CLI + generated client + schema + migrations
 COPY --from=deps /app/node_modules/prisma ./node_modules/prisma
 COPY --from=deps /app/node_modules/@prisma ./node_modules/@prisma
 COPY --from=deps /app/lib/generated ./lib/generated
