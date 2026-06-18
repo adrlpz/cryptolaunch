@@ -7,7 +7,8 @@ FROM node:20-alpine AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
 COPY prisma ./prisma/
-RUN npm ci --production=false
+RUN npm ci
+COPY prisma.config.ts ./
 RUN npx prisma generate
 
 # Stage 2: Build Next.js
@@ -26,25 +27,18 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Create non-root user
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+# Install minimal deps for prisma migrate
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev && npx prisma generate
 
 # Copy standalone build
 COPY --from=builder /app/public ./public
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-COPY --from=deps /app/lib/generated ./lib/generated
+COPY --from=builder --chown=1001:1001 /app/.next/standalone ./
+COPY --from=builder --chown=1001:1001 /app/.next/static ./.next/static
 COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
 COPY --from=builder /app/artifacts ./artifacts
 COPY --from=builder /app/app/artifacts ./app/artifacts
-
-# Install prisma CLI for migrations
-COPY --from=deps /app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=deps /app/node_modules/prisma ./node_modules/prisma
-COPY --from=deps /app/node_modules/@prisma ./node_modules/@prisma
-
-USER nextjs
 
 EXPOSE 3000
 ENV PORT=3000
