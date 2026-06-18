@@ -173,7 +173,7 @@ export async function POST(
 
     // Create LaunchpadProject record
     const project = await prisma.launchpadProject.upsert({
-      where: { id: launch.id },
+      where: { launchId: launch.id },
       update: {},
       create: {
         launchId: launch.id,
@@ -234,9 +234,10 @@ export async function POST(
       },
     });
   } catch (error) {
-    console.error("Error confirming deploy:", error);
+    const msg = error instanceof Error ? error.message : String(error);
+    console.error("Error confirming deploy:", msg);
     return NextResponse.json(
-      { success: false, error: "Internal server error" },
+      { success: false, error: msg },
       { status: 500 }
     );
   }
