@@ -79,6 +79,24 @@ export default function BondingCurveWidget({
   // Check if can graduate (progress >= 100% and not yet graduated)
   const showGraduateButton = !isGraduated && progress >= 100 && curveAddress;
 
+  // Sync trade to backend DB after on-chain tx
+  const syncToBackend = useCallback(async (ethAmount: number, tokenAmount: number) => {
+    try {
+      await fetch(`/api/pools/${projectId}/buy`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          walletAddress: (await new ethers.BrowserProvider(window.ethereum!).getSigner()).address,
+          ethAmount,
+        }),
+      });
+    } catch (err) {
+      console.warn("Failed to sync to backend:", err);
+    }
+    // Trigger parent refresh
+    onBuy?.(tokenAmount);
+  }, [projectId, onBuy]);
+
   // On-chain buy via wallet
   const handleOnChainBuy = useCallback(async () => {
     if (!curveAddress) {
@@ -106,7 +124,14 @@ export default function BondingCurveWidget({
       const receipt = await tx.wait();
       if (receipt.status === 1) {
         setTxStatus("success");
-        onBuy?.(numAmount);
+        // Parse TokenPurchased event for token amount
+        const log = receipt.logs.find((l: ethers.Log) => {
+          try { return curve.interface.parseLog(l)?.name === "TokenPurchased"; }
+          catch { return false; }
+        });
+        const parsed = log ? curve.interface.parseLog(log) : null;
+        const tokenOut = parsed ? Number(ethers.formatEther(parsed.args.tokensOut)) : 0;
+        await syncToBackend(numAmount, tokenOut);
       } else {
         setTxStatus("error");
       }
@@ -116,7 +141,7 @@ export default function BondingCurveWidget({
       alert(`Buy failed: ${message.slice(0, 200)}`);
       setTxStatus("error");
     }
-  }, [curveAddress, amount, onBuy]);
+  }, [curveAddress, amount, syncToBackend]);
 
   // On-chain sell via wallet
   const handleOnChainSell = useCallback(async () => {
@@ -139,12 +164,35 @@ export default function BondingCurveWidget({
       const signer = await provider.getSigner();
       const curve = new ethers.Contract(curveAddress, BONDING_CURVE_ABI, signer);
 
+      // Approve tokens first
+      const tokenContract = new ethers.Contract(
+        await curve.token(),
+        ["function approve(address,uint256) returns (bool)", "function allowance(address,address) view returns (uint256)"],
+        signer
+      );
+      const allowance = await tokenContract.allowance(await signer.getAddress(), curveAddress);
+      if (allowance < ethers.parseEther(amount)) {
+        const approveTx = await tokenContract.approve(curveAddress, ethers.MaxUint256);
+        await approveTx.wait();
+      }
+
       const tx = await curve.sell(ethers.parseEther(amount));
       setTxHash(tx.hash);
 
       const receipt = await tx.wait();
       if (receipt.status === 1) {
         setTxStatus("success");
+        // Sync to backend
+        try {
+          await fetch(`/api/pools/${projectId}/sell`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              walletAddress: await signer.getAddress(),
+              tokenAmount: numAmount,
+            }),
+          });
+        } catch (e) { console.warn("Sync failed:", e); }
         onSell?.(numAmount);
       } else {
         setTxStatus("error");
@@ -155,7 +203,7 @@ export default function BondingCurveWidget({
       alert(`Sell failed: ${message.slice(0, 200)}`);
       setTxStatus("error");
     }
-  }, [curveAddress, amount, onSell]);
+  }, [curveAddress, amount, projectId, onSell]);
 
   // Graduate to DEX (owner only)
   const handleGraduate = useCallback(async () => {

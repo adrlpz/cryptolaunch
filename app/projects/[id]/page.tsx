@@ -239,6 +239,8 @@ export default function ProjectDetailPage() {
               isGraduated={pool.isGraduated}
               dexPairAddress={pool.dexPairAddress}
               maxTokens={Number(pool.currentReserveToken)}
+              onBuy={() => { fetchProject(); fetchPoolData(); }}
+              onSell={() => { fetchProject(); fetchPoolData(); }}
             />
           )}
 
