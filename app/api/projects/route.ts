@@ -5,6 +5,17 @@ export async function GET() {
   try {
     const projects = await prisma.launchpadProject.findMany({
       orderBy: { createdAt: "desc" },
+      include: {
+        liquidityPool: {
+          select: {
+            poolAddress: true,
+            isGraduated: true,
+            totalSold: true,
+            totalRaised: true,
+            graduationCap: true,
+          },
+        },
+      },
     });
 
     return NextResponse.json({ success: true, data: projects });
