@@ -4,7 +4,7 @@ import { ethers } from "ethers";
 import { FACTORY_ABI } from "@/lib/factory-abi";
 
 const LAUNCH_ABI = [
-  "function launches(address) view returns (bool exists, address creator, string tokenName, string tokenSymbol, address bondingCurve, uint256 totalSupply, uint256 basePrice, uint256 graduationCap)",
+  "function launches(address) view returns (address token, address bondingCurve, address creator, string tokenName, string tokenSymbol, uint256 totalSupply, uint256 basePrice, uint256 graduationCap, uint256 createdAt, bool exists)",
 ];
 
 export async function GET(
@@ -47,8 +47,9 @@ export async function GET(
           const provider = new ethers.JsonRpcProvider(rpcUrl);
           const factory = new ethers.Contract(factoryAddress, LAUNCH_ABI, provider);
           const info = await factory.launches(project.contractAddress);
-          if (info.exists) {
-            bondingCurveAddress = info.bondingCurve;
+          // Struct returns: token, bondingCurve, creator, tokenName, tokenSymbol, totalSupply, basePrice, graduationCap, createdAt, exists
+          if (info[9]) { // exists
+            bondingCurveAddress = info[1]; // bondingCurve
             // Update DB for future requests
             if (project.liquidityPool && bondingCurveAddress) {
               await prisma.liquidityPool.update({
