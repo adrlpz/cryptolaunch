@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET() {
   try {
+    const now = new Date();
     const projects = await prisma.launchpadProject.findMany({
       orderBy: { createdAt: "desc" },
       include: {
@@ -17,6 +18,24 @@ export async function GET() {
         },
       },
     });
+
+    // Auto-update statuses based on launchDate and graduation
+    for (const project of projects) {
+      if (project.status === "upcoming" && new Date(project.launchDate) <= now) {
+        await prisma.launchpadProject.update({
+          where: { id: project.id },
+          data: { status: "active" },
+        });
+        project.status = "active";
+      }
+      if (project.liquidityPool?.isGraduated && project.status !== "graduated") {
+        await prisma.launchpadProject.update({
+          where: { id: project.id },
+          data: { status: "graduated" },
+        });
+        project.status = "graduated";
+      }
+    }
 
     return NextResponse.json({ success: true, data: projects });
   } catch (error) {

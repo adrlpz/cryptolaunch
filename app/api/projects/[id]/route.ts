@@ -35,6 +35,25 @@ export async function GET(
       );
     }
 
+    // Auto-update status based on launchDate
+    let statusUpdated = false;
+    if (project.status === "upcoming" && new Date(project.launchDate) <= new Date()) {
+      await prisma.launchpadProject.update({
+        where: { id },
+        data: { status: "active" },
+      });
+      project.status = "active";
+      statusUpdated = true;
+    }
+    if (project.liquidityPool?.isGraduated && project.status !== "graduated") {
+      await prisma.launchpadProject.update({
+        where: { id },
+        data: { status: "graduated" },
+      });
+      project.status = "graduated";
+      statusUpdated = true;
+    }
+
     // Get bonding curve address: pool → on-chain factory → null
     let bondingCurveAddress = project.liquidityPool?.poolAddress ?? null;
 
