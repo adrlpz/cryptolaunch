@@ -81,7 +81,16 @@ export default function BondingCurveWidget({
 
   // On-chain buy via wallet
   const handleOnChainBuy = useCallback(async () => {
-    if (!curveAddress || !window.ethereum) return;
+    if (!curveAddress) {
+      console.error("No curve address");
+      setTxStatus("error");
+      return;
+    }
+    if (!window.ethereum) {
+      alert("Please install MetaMask to buy tokens on-chain");
+      setTxStatus("error");
+      return;
+    }
     const numAmount = Number(amount);
     if (!numAmount || numAmount <= 0) return;
 
@@ -101,15 +110,26 @@ export default function BondingCurveWidget({
       } else {
         setTxStatus("error");
       }
-    } catch (err) {
+    } catch (err: unknown) {
       console.error("Buy failed:", err);
+      const message = err instanceof Error ? err.message : String(err);
+      alert(`Buy failed: ${message.slice(0, 200)}`);
       setTxStatus("error");
     }
   }, [curveAddress, amount, onBuy]);
 
   // On-chain sell via wallet
   const handleOnChainSell = useCallback(async () => {
-    if (!curveAddress || !window.ethereum) return;
+    if (!curveAddress) {
+      console.error("No curve address");
+      setTxStatus("error");
+      return;
+    }
+    if (!window.ethereum) {
+      alert("Please install MetaMask to sell tokens on-chain");
+      setTxStatus("error");
+      return;
+    }
     const numAmount = Number(amount);
     if (!numAmount || numAmount <= 0) return;
 
@@ -129,8 +149,10 @@ export default function BondingCurveWidget({
       } else {
         setTxStatus("error");
       }
-    } catch (err) {
+    } catch (err: unknown) {
       console.error("Sell failed:", err);
+      const message = err instanceof Error ? err.message : String(err);
+      alert(`Sell failed: ${message.slice(0, 200)}`);
       setTxStatus("error");
     }
   }, [curveAddress, amount, onSell]);
