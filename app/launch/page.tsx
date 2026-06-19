@@ -195,11 +195,7 @@ export default function LaunchPage() {
       <div className="mb-8">
         <h1 className="text-3xl font-bold">Launch a Token</h1>
         <p className="text-zinc-400">
-          Deploy your ERC-20 with bonding curve. Contract address ends in{" "}
-          <code className="rounded bg-zinc-800 px-1.5 py-0.5 text-sm text-purple-400">
-            ...{SUFFIX}
-          </code>
-          . You pay gas directly from your wallet.
+          Deploy your ERC-20 token with bonding curve liquidity. You pay gas directly from your wallet.
         </p>
       </div>
 
@@ -397,7 +393,7 @@ export default function LaunchPage() {
             disabled={loading || !walletAddress || !form.tokenName || !form.tokenSymbol}
             className="w-full rounded-lg bg-gradient-to-r from-purple-500 to-blue-600 py-3 font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-50"
           >
-            {loading ? "Generating Vanity Address..." : "Continue →"}
+            {loading ? "Preparing..." : "Continue →"}
           </button>
         </div>
       )}
@@ -405,10 +401,10 @@ export default function LaunchPage() {
       {/* STEP 2: Precomputing */}
       {step === "precomputing" && (
         <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-8 text-center">
-          <div className="mb-4 text-4xl">⛏️</div>
-          <h2 className="mb-2 text-xl font-bold">Finding Vanity Salt</h2>
+          <div className="mb-4 text-4xl">⏳</div>
+          <h2 className="mb-2 text-xl font-bold">Preparing Your Token</h2>
           <p className="mb-4 text-zinc-400">
-            Brute-forcing salt values via on-chain precompute...
+            Setting up your token deployment...
           </p>
           <div className="mx-auto max-w-md">
             <div className="mb-2 flex justify-between text-sm">
@@ -428,33 +424,14 @@ export default function LaunchPage() {
       {/* STEP 3: Review & Sign */}
       {step === "review" && precompute && (
         <div className="space-y-6">
-          <div className="rounded-xl border border-green-500/30 bg-green-500/5 p-6">
-            <div className="mb-3 text-sm text-zinc-500">
-              Your token will be deployed at:
+          <div className="rounded-xl border border-green-500/30 bg-green-500/5 p-6 text-center">
+            <div className="mb-2 text-4xl">🚀</div>
+            <div className="text-lg font-bold text-green-400">
+              Token Ready to Deploy
             </div>
-            <div className="break-all font-mono text-lg text-green-400">
-              {precompute.predictedAddress}
-            </div>
-            <div className="mt-3 flex items-center gap-2">
-              <span
-                className={`rounded-full px-3 py-1 text-xs ${
-                  precompute.predictedAddress
-                    .toLowerCase()
-                    .endsWith(precompute.suffix)
-                    ? "bg-green-500/20 text-green-400"
-                    : "bg-red-500/20 text-red-400"
-                }`}
-              >
-                {precompute.predictedAddress
-                  .toLowerCase()
-                  .endsWith(precompute.suffix)
-                  ? `✅ ends with ...${precompute.suffix}`
-                  : "❌ no suffix match"}
-              </span>
-              <span className="text-xs text-zinc-500">
-                Found in {precompute.attempts} attempts
-              </span>
-            </div>
+            <p className="mt-1 text-sm text-zinc-400">
+              Review the details below and sign the transaction to deploy your token.
+            </p>
           </div>
 
           <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-6">
@@ -529,15 +506,15 @@ export default function LaunchPage() {
       )}
 
       {/* STEP 5: Done */}
-      {step === "done" && precompute && (
+      {step === "done" && (
         <div className="rounded-xl border border-green-500/30 bg-green-500/5 p-8 text-center">
           <div className="mb-4 text-4xl">🎉</div>
-          <h2 className="mb-2 text-xl font-bold">Token Deployed!</h2>
-          <div className="mb-4 break-all font-mono text-sm text-green-400">
-            {precompute.predictedAddress}
-          </div>
+          <h2 className="mb-2 text-xl font-bold">Token Deployed Successfully!</h2>
+          <p className="mb-6 text-sm text-zinc-400">
+            Your token is now live on the blockchain with bonding curve liquidity.
+          </p>
           <a
-            href={`/projects/${projectId ?? precompute.launchId}`}
+            href={`/projects/${projectId}`}
             className="inline-block rounded-lg bg-gradient-to-r from-purple-500 to-blue-600 px-6 py-2 text-sm font-medium text-white"
           >
             View Project →
