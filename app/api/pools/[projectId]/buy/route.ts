@@ -78,6 +78,14 @@ export async function POST(
       );
     }
 
+    // Check launch date
+    if (pool.project && pool.project.launchDate && new Date(pool.project.launchDate) > new Date()) {
+      return NextResponse.json(
+        { success: false, error: "Trading has not started yet. Wait for the launch date." },
+        { status: 400 }
+      );
+    }
+
     const result = simulateBuy(
       Number(pool.basePrice),
       Number(pool.slope || 0),

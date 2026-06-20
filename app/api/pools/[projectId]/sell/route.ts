@@ -50,6 +50,7 @@ export async function POST(
 
     const pool = await prisma.liquidityPool.findUnique({
       where: { projectId },
+      include: { project: true },
     });
 
     if (!pool) {
@@ -62,6 +63,14 @@ export async function POST(
     if (pool.isGraduated) {
       return NextResponse.json(
         { success: false, error: "Token has graduated. Sell on DEX instead." },
+        { status: 400 }
+      );
+    }
+
+    // Check launch date
+    if (pool.project && pool.project.launchDate && new Date(pool.project.launchDate) > new Date()) {
+      return NextResponse.json(
+        { success: false, error: "Trading has not started yet. Wait for the launch date." },
         { status: 400 }
       );
     }

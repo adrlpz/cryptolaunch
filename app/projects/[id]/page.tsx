@@ -237,6 +237,8 @@ export default function ProjectDetailPage() {
               graduationCap={Number(pool.graduationCap)}
               currentPrice={pool.currentPrice ?? Number(project.tokenPrice)}
               isGraduated={pool.isGraduated}
+              status={project.status}
+              launchDate={project.launchDate}
               dexPairAddress={pool.dexPairAddress}
               maxTokens={Number(pool.currentReserveToken)}
               onBuy={() => { fetchProject(); fetchPoolData(); }}

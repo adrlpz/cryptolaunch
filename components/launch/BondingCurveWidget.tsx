@@ -16,6 +16,8 @@ interface BondingCurveWidgetProps {
   graduationCap: number;
   currentPrice: number;
   isGraduated: boolean;
+  status?: string;
+  launchDate?: string;
   dexPairAddress?: string | null;
   maxTokens: number;
   onBuy?: (ethAmount: number) => void;
@@ -34,11 +36,14 @@ export default function BondingCurveWidget({
   graduationCap,
   currentPrice,
   isGraduated,
+  status,
+  launchDate,
   dexPairAddress,
   maxTokens,
   onBuy,
   onSell,
 }: BondingCurveWidgetProps) {
+  const isUpcoming = status === "upcoming" && launchDate && new Date(launchDate) > new Date();
   const [mode, setMode] = useState<"buy" | "sell">("buy");
   const [amount, setAmount] = useState("");
   const [txStatus, setTxStatus] = useState<"idle" | "pending" | "success" | "error">("idle");
@@ -313,7 +318,27 @@ export default function BondingCurveWidget({
         </div>
       )}
 
-      {isGraduated ? (
+      {isUpcoming ? (
+        <div className="rounded-lg border border-yellow-500/30 bg-yellow-500/10 p-6 text-center">
+          <div className="mb-2 text-2xl">⏳</div>
+          <div className="text-lg font-bold text-yellow-400">
+            Trading Not Started
+          </div>
+          <p className="mt-1 text-sm text-zinc-400">
+            Trading begins on{" "}
+            <span className="text-white">
+              {new Date(launchDate!).toLocaleDateString(undefined, {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+                timeZoneName: "short",
+              })}
+            </span>
+          </p>
+        </div>
+      ) : isGraduated ? (
         <div className="space-y-4">
           <div className="rounded-lg border border-green-500/30 bg-green-500/10 p-4 text-center">
             <div className="text-lg font-bold text-green-400">
