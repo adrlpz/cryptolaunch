@@ -288,35 +288,40 @@ contract BondingCurve is Ownable, ReentrancyGuard {
     function _calculateTokensForEth(uint256 ethAmount) internal view returns (uint256) {
         if (ethAmount == 0) return 0;
 
-        // cost(n) = (basePrice*n + slope*n^2/2) / 1e18 = ethAmount
-        // → slope*n^2 + 2*(basePrice+slope*totalSold)*n - 2*1e18*ethAmount = 0
-        uint256 a = slope;
-        uint256 b = (basePrice * 2) + (slope * totalSold * 2);
-        uint256 c = ethAmount * 2 * 1e18;
+        // Convert totalSold from token-wei to token-count
+        uint256 sold = totalSold / 1e18;
 
-        uint256 discriminant = (b * b) + (4 * a * c);
+        // cost(T) = basePrice*T + slope*T²/2 = ethAmount
+        // slope*T² + 2*(basePrice + slope*sold)*T - 2*ethAmount = 0
+        // T = (sqrt(b² + 8*slope*ethAmount) - b) / (2*slope)
+        uint256 a = slope;
+        uint256 b = (basePrice * 2) + (slope * sold * 2);
+        uint256 c = ethAmount * 8;
+
+        uint256 discriminant = (b * b) + (a * c);
         uint256 sqrtDisc = _sqrt(discriminant);
 
-        return (sqrtDisc > b) ? (sqrtDisc - b) / (2 * a) : 0;
+        uint256 tokens = (sqrtDisc > b) ? (sqrtDisc - b) / (2 * a) : 0;
+        return tokens * 1e18; // convert back to token-wei
     }
 
     /**
-     * @dev cost(n) = basePrice*n + slope*(2*totalSold*n + n*n) / 2
+     * @dev cost(n) in wei. n is in token-wei, convert to token-count first.
      */
     function _calculateCostForTokens(uint256 n) internal view returns (uint256) {
-        // cost in wei = (basePrice*n + slope*(2*totalSold*n + n*n)/2) / 1e18
-        // Division by 1e18 because basePrice/slope are wei-per-token-wei
-        return ((basePrice * n) + (slope * ((2 * totalSold * n) + (n * n))) / 2) / 1e18;
+        uint256 T = n / 1e18;
+        uint256 sold = totalSold / 1e18;
+        return (basePrice * T) + (slope * ((2 * sold * T) + (T * T))) / 2;
     }
 
     /**
      * @dev ETH received when selling n tokens from current totalSold.
-     *      = cost to buy n tokens starting from (totalSold - n).
      */
     function _calculateEthForTokens(uint256 n) internal view returns (uint256) {
         if (totalSold < n) return 0;
-        uint256 start = totalSold - n;
-        return ((basePrice * n) + (slope * ((2 * start * n) + (n * n))) / 2) / 1e18;
+        uint256 start = (totalSold - n) / 1e18;
+        uint256 T = n / 1e18;
+        return (basePrice * T) + (slope * ((2 * start * T) + (T * T))) / 2;
     }
 
     // ============================================================

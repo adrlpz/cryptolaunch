@@ -7,12 +7,13 @@ describe("BondingCurve", function () {
   let owner, creator, platform, buyer1, buyer2, seller, user1;
 
   // Parameters: basePrice and slope are in wei per token-wei.
-  // basePrice=1000 wei, slope=1 wei per token
-  // cost(n) = 1000*n + n^2/2 — for small n, cost is tiny
+  // Formula: cost(T) = basePrice*T + slope*T²/2 (T = token count, not wei)
+  // basePrice=1e15 wei/token (0.001 ETH/token), slope=1e12 wei/token²
+  // cost(10 tokens) ≈ 0.01 ETH
   const SUPPLY = ethers.parseEther("1000000"); // 1M tokens
-  const BASE_PRICE = 1000; // tiny base price
-  const SLOPE = 1; // tiny slope
-  const GRADUATION_CAP = ethers.parseEther("0.001"); // 0.001 ETH — easy to trigger
+  const BASE_PRICE = ethers.parseEther("0.001"); // 0.001 ETH per token
+  const SLOPE = ethers.parseUnits("1000", "gwei"); // 1e12 wei per token²
+  const GRADUATION_CAP = ethers.parseEther("0.1"); // 0.1 ETH
 
   beforeEach(async function () {
     [owner, creator, platform, buyer1, buyer2, seller, user1] = await ethers.getSigners();
@@ -165,14 +166,14 @@ describe("BondingCurve", function () {
 
   describe("sell", function () {
     beforeEach(async function () {
-      // Buy amount below graduation cap (0.001 ETH)
-      await curve.connect(seller).buy({ value: ethers.parseEther("0.0005") });
+      // Buy enough to have tokens to sell (below graduation cap)
+      await curve.connect(seller).buy({ value: ethers.parseEther("0.01") });
     });
 
     it("should return ETH to seller", async function () {
       const sellerBal = await token.balanceOf(seller.address);
-      // Sell 10% of bought tokens
-      const sellAmount = sellerBal / 10n;
+      // Sell min 1 token to avoid rounding to 0
+      const sellAmount = sellerBal > ethers.parseEther("1") ? ethers.parseEther("1") : sellerBal;
       const balBefore = await ethers.provider.getBalance(seller.address);
 
       await token.connect(seller).approve(await curve.getAddress(), sellAmount);
@@ -188,7 +189,7 @@ describe("BondingCurve", function () {
     it("should update totalSold and tokenBalance", async function () {
       const totalSoldBefore = await curve.totalSold();
       const sellerBal = await token.balanceOf(seller.address);
-      const sellAmount = sellerBal / 10n;
+      const sellAmount = sellerBal > ethers.parseEther("1") ? ethers.parseEther("1") : sellerBal;
 
       await token.connect(seller).approve(await curve.getAddress(), sellAmount);
       await curve.connect(seller).sell(sellAmount);
@@ -198,7 +199,7 @@ describe("BondingCurve", function () {
 
     it("should emit TokenSold event", async function () {
       const sellerBal = await token.balanceOf(seller.address);
-      const sellAmount = sellerBal / 10n;
+      const sellAmount = sellerBal > ethers.parseEther("1") ? ethers.parseEther("1") : sellerBal;
       await token.connect(seller).approve(await curve.getAddress(), sellAmount);
       await expect(curve.connect(seller).sell(sellAmount))
         .to.emit(curve, "TokenSold");
@@ -495,8 +496,7 @@ describe("BondingCurve", function () {
 
   describe("Fee Accounting", function () {
     it("should track totalRaised consistently after buy+sell", async function () {
-      // Buy small amount to avoid graduating
-      await curve.connect(buyer1).buy({ value: ethers.parseEther("0.0001") });
+      await curve.connect(buyer1).buy({ value: ethers.parseEther("0.01") });
       const raisedAfterBuy = await curve.totalRaised();
 
       const buyerBalance = await token.balanceOf(buyer1.address);
