@@ -23,6 +23,11 @@ function toBI(n: number): bigint {
   return BigInt(Math.round(n));
 }
 
+/** Convert number to wei (multiply by 1e18) */
+function toWei(n: number): bigint {
+  return BigInt(Math.round(n * 1e18));
+}
+
 function costToBuyI(basePrice: bigint, slope: bigint, totalSold: bigint, n: bigint): bigint {
   return basePrice * n + (slope * (2n * totalSold * n + n * n)) / 2n;
 }
@@ -34,10 +39,8 @@ function tokensForEthI(basePrice: bigint, slope: bigint, totalSold: bigint, ethA
     return basePrice > 0n ? ethAmount / basePrice : 0n;
   }
 
-  // Match contract formula:
   // cost(n) = basePrice*n + slope*n²/2 = ethAmount
-  // → slope*n² + 2*(basePrice + slope*totalSold)*n - 8*ethAmount = 0
-  // n = (sqrt(b² + a*c) - b) / (2*a)
+  // slope*n² + 2*(basePrice+slope*totalSold)*n - 2*ethAmount = 0
   const a = slope;
   const b = (basePrice * 2n) + (slope * totalSold * 2n);
   const c = ethAmount * 8n;
