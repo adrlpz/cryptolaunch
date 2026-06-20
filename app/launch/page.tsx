@@ -346,7 +346,12 @@ export default function LaunchPage() {
                 </div>
               </div>
               <div>
-                <label className="mb-1.5 block text-sm text-zinc-400">Launch Date *</label>
+                <label className="mb-1.5 block text-sm text-zinc-400">
+                  Launch Date *{" "}
+                  <span className="text-xs text-zinc-600">
+                    ({Intl.DateTimeFormat().resolvedOptions().timeZone})
+                  </span>
+                </label>
                 <input
                   type="datetime-local"
                   value={form.launchDate}
