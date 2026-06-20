@@ -158,8 +158,11 @@ export async function POST(request: NextRequest) {
       return v.toFixed(18).replace(/\.?0+$/, "");
     };
 
-    const basePriceWei = ethers.parseEther(toDecimal(basePriceNum));
-    const slopeWei = ethers.parseEther(toDecimal(slope));
+    // basePrice and slope are in ETH per token-wei (very small numbers)
+    // Contract needs wei per token-wei, so multiply by 1e18
+    const toWei = (v: number): bigint => BigInt(Math.round(v * 1e18));
+    const basePriceWei = toWei(basePriceNum);
+    const slopeWei = toWei(slope);
     const graduationCapWei = ethers.parseEther(graduationCap.toString());
 
     // Generate vanity salt (local compute — no RPC calls)

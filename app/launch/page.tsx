@@ -293,8 +293,10 @@ export default function LaunchPage() {
                     const capNum = Number(cap);
                     let newBasePrice = form.basePrice;
                     if (supply > 0 && capNum > 0) {
-                      // basePrice = cap / supply / 2 (half of max to ensure slope > 0)
-                      newBasePrice = (capNum / supply / 2).toExponential(2);
+                      // basePrice = cap / supply / 2 (ETH per token)
+                      // Contract stores wei-per-token-wei, so divide by 1e18
+                      const basePriceEthPerToken = capNum / supply / 2;
+                      newBasePrice = basePriceEthPerToken.toExponential(4);
                     }
                     setForm({ ...form, graduationCap: cap, basePrice: newBasePrice });
                   }}

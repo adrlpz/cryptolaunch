@@ -34,17 +34,15 @@ function tokensForEthI(basePrice: bigint, slope: bigint, totalSold: bigint, ethA
     return basePrice > 0n ? ethAmount / basePrice : 0n;
   }
 
-  // Match contract formula exactly:
-  // a = slope
-  // b = 2*(basePrice + slope*totalSold)
-  // c = ethAmount * 4
-  // discriminant = b² + 4*a*c
-  // tokens = (sqrt(discriminant) - b) / (2*a)
+  // Match contract formula:
+  // cost(n) = basePrice*n + slope*n²/2 = ethAmount
+  // → slope*n² + 2*(basePrice + slope*totalSold)*n - 8*ethAmount = 0
+  // n = (sqrt(b² + a*c) - b) / (2*a)
   const a = slope;
   const b = (basePrice * 2n) + (slope * totalSold * 2n);
-  const c = ethAmount * 2n;
+  const c = ethAmount * 8n;
 
-  const discriminant = (b * b) + (4n * a * c);
+  const discriminant = (b * b) + (a * c);
   const sqrtDisc = sqrtBigInt(discriminant);
 
   return sqrtDisc > b ? (sqrtDisc - b) / (2n * a) : 0n;

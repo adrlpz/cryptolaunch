@@ -288,11 +288,15 @@ contract BondingCurve is Ownable, ReentrancyGuard {
     function _calculateTokensForEth(uint256 ethAmount) internal view returns (uint256) {
         if (ethAmount == 0) return 0;
 
+        // cost(n) = basePrice*n + slope*n^2/2 = ethAmount
+        // → slope*n^2 + 2*basePrice*n - 2*ethAmount = 0
+        // Quadratic: a=slope, b=2*(basePrice + slope*totalSold), c=-2*ethAmount
+        // n = (sqrt(b^2 + 8*slope*ethAmount) - b) / (2*slope)
         uint256 a = slope;
         uint256 b = (basePrice * 2) + (slope * totalSold * 2);
-        uint256 c = ethAmount * 2;
+        uint256 c = ethAmount * 8;
 
-        uint256 discriminant = (b * b) + (4 * a * c);
+        uint256 discriminant = (b * b) + (a * c);
         uint256 sqrtDisc = _sqrt(discriminant);
 
         return (sqrtDisc > b) ? (sqrtDisc - b) / (2 * a) : 0;
