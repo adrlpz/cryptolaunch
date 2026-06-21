@@ -59,82 +59,83 @@ export default function AdminProjectsPage() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12">
-      <div className="mb-8 flex items-center justify-between">
-        <div>
-          <Link href="/admin" className="text-sm text-purple-400 hover:underline">
-            ← Back to Admin
-          </Link>
-          <h1 className="mt-2 text-3xl font-bold">Project Management</h1>
-        </div>
-        <div className="text-sm text-zinc-500">
-          {projects.length} projects total
+    <div className="mx-auto max-w-7xl px-4 py-10">
+      <div className="mb-8">
+        <Link href="/admin" className="text-xs text-accent hover:underline">
+          ← Admin
+        </Link>
+        <p className="mb-1 mt-2 font-mono text-xs uppercase tracking-wider text-muted">
+          Management
+        </p>
+        <div className="flex items-end justify-between">
+          <h1 className="font-display text-3xl font-bold">Projects</h1>
+          <span className="text-xs text-muted">{projects.length} total</span>
         </div>
       </div>
 
       {loading ? (
-        <div className="animate-pulse space-y-4">
+        <div className="space-y-2">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-20 rounded-xl bg-zinc-800" />
+            <div key={i} className="h-16 rounded bg-surface animate-pulse" />
           ))}
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-xl border border-zinc-800">
+        <div className="overflow-x-auto rounded-lg border border-edge">
           <table className="w-full text-sm">
-            <thead className="border-b border-zinc-800 bg-zinc-900/50">
+            <thead className="border-b border-edge bg-surface">
               <tr>
-                <th className="px-4 py-3 text-left text-zinc-500">Token</th>
-                <th className="px-4 py-3 text-left text-zinc-500">Chain</th>
-                <th className="px-4 py-3 text-left text-zinc-500">Price</th>
-                <th className="px-4 py-3 text-left text-zinc-500">Sold</th>
-                <th className="px-4 py-3 text-left text-zinc-500">Positions</th>
-                <th className="px-4 py-3 text-left text-zinc-500">LP Status</th>
-                <th className="px-4 py-3 text-left text-zinc-500">Status</th>
-                <th className="px-4 py-3 text-left text-zinc-500">Actions</th>
+                {["Token", "Chain", "Price", "Sold", "Positions", "LP", "Status", ""].map(
+                  (h) => (
+                    <th
+                      key={h}
+                      className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted"
+                    >
+                      {h}
+                    </th>
+                  )
+                )}
               </tr>
             </thead>
             <tbody>
               {projects.map((p) => (
-                <tr key={p.id} className="border-b border-zinc-800/50">
+                <tr key={p.id} className="border-b border-edge/50">
                   <td className="px-4 py-3">
                     <Link
                       href={`/projects/${p.id}`}
-                      className="font-medium hover:text-purple-400"
+                      className="font-medium hover:text-accent"
                     >
                       {p.tokenName}
-                      <span className="ml-1 text-zinc-500">
-                        ${p.tokenSymbol}
-                      </span>
+                      <span className="ml-1 text-muted">${p.tokenSymbol}</span>
                     </Link>
                   </td>
-                  <td className="px-4 py-3 text-zinc-400">
+                  <td className="px-4 py-3 text-muted text-xs">
                     {p.chain.toUpperCase()}
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-3 font-mono text-xs">
                     ${Number(p.tokenPrice).toFixed(6)}
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
-                      <div className="h-1.5 w-16 overflow-hidden rounded-full bg-zinc-800">
+                      <div className="h-1 w-12 overflow-hidden rounded-full bg-raised">
                         <div
-                          className="h-full rounded-full bg-purple-500"
+                          className="h-full rounded-full bg-accent"
                           style={{ width: `${p.soldPercent}%` }}
                         />
                       </div>
-                      <span className="text-xs text-zinc-500">
-                        {p.soldPercent.toFixed(1)}%
+                      <span className="text-xs text-muted">
+                        {p.soldPercent.toFixed(0)}%
                       </span>
                     </div>
                   </td>
                   <td className="px-4 py-3">{p.positionCount}</td>
                   <td className="px-4 py-3">
                     <span
-                      className={`rounded-full px-2 py-0.5 text-xs ${
+                      className={`rounded px-2 py-0.5 text-xs ${
                         p.lpStatus === "graduated"
-                          ? "bg-green-500/20 text-green-400"
+                          ? "bg-profit-subtle text-profit"
                           : p.lpStatus === "bonding"
-                            ? "bg-purple-500/20 text-purple-400"
-                            : "bg-zinc-500/20 text-zinc-400"
+                            ? "bg-accent-subtle text-accent"
+                            : "bg-raised text-muted"
                       }`}
                     >
                       {p.lpStatus}
@@ -146,7 +147,7 @@ export default function AdminProjectsPage() {
                       onChange={(e) =>
                         handleStatusChange(p.id, e.target.value)
                       }
-                      className="rounded border border-zinc-700 bg-zinc-800 px-2 py-1 text-xs text-white"
+                      className="rounded border border-edge bg-raised px-2 py-1 text-xs outline-none"
                     >
                       <option value="upcoming">Upcoming</option>
                       <option value="active">Active</option>
@@ -156,7 +157,7 @@ export default function AdminProjectsPage() {
                   <td className="px-4 py-3">
                     <Link
                       href={`/projects/${p.id}`}
-                      className="text-xs text-purple-400 hover:underline"
+                      className="text-xs text-accent hover:underline"
                     >
                       View
                     </Link>

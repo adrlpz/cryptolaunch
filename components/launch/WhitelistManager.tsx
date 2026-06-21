@@ -91,78 +91,80 @@ export default function WhitelistManager({ projectId }: WhitelistManagerProps) {
     `${addr.slice(0, 6)}...${addr.slice(-4)}`;
 
   return (
-    <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-6">
-      <h3 className="mb-4 text-lg font-bold">
-        Whitelist
-        <span className="ml-2 text-sm font-normal text-zinc-500">
-          ({entries.length} wallets)
+    <div className="rounded-lg border border-edge bg-surface p-5">
+      <div className="mb-4 flex items-center gap-2">
+        <h2 className="font-display text-sm font-bold uppercase tracking-wider text-muted">
+          Whitelist
+        </h2>
+        <span className="rounded bg-raised px-2 py-0.5 text-xs text-muted">
+          {entries.length}
         </span>
-      </h3>
+      </div>
 
-      {/* Add Form */}
+      {/* Add form */}
       <div className="mb-4 flex gap-2">
         <input
           type="text"
-          placeholder="0x... wallet address"
+          placeholder="0x… wallet address"
           value={newWallet}
           onChange={(e) => setNewWallet(e.target.value)}
-          className="flex-1 rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-white outline-none focus:border-purple-500"
+          className="flex-1 rounded-lg border border-edge bg-raised px-3 py-2 text-sm font-mono outline-none focus:border-accent"
         />
         <input
           type="number"
-          placeholder="Max alloc (opt)"
+          placeholder="Max alloc"
           value={maxAllocation}
           onChange={(e) => setMaxAllocation(e.target.value)}
-          className="w-32 rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-white outline-none focus:border-purple-500"
+          className="w-28 rounded-lg border border-edge bg-raised px-3 py-2 text-sm outline-none focus:border-accent"
         />
         <button
           onClick={handleAdd}
           disabled={adding || !newWallet}
-          className="rounded-lg bg-purple-500 px-4 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-50"
+          className="rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-background transition-opacity hover:opacity-90 disabled:opacity-50"
         >
-          {adding ? "Adding..." : "Add"}
+          {adding ? "…" : "Add"}
         </button>
       </div>
 
       {error && (
-        <div className="mb-4 rounded-lg bg-red-500/10 px-4 py-2 text-sm text-red-400">
+        <div className="mb-4 rounded-lg bg-loss-subtle px-4 py-2 text-sm text-loss">
           {error}
         </div>
       )}
 
       {/* List */}
       {loading ? (
-        <div className="animate-pulse space-y-2">
+        <div className="space-y-2">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-12 rounded-lg bg-zinc-800" />
+            <div key={i} className="h-10 rounded bg-raised animate-pulse" />
           ))}
         </div>
       ) : entries.length === 0 ? (
-        <div className="rounded-lg border border-zinc-800 p-6 text-center text-sm text-zinc-500">
+        <div className="rounded-lg border border-edge p-6 text-center text-xs text-muted">
           No wallets whitelisted yet.
         </div>
       ) : (
-        <div className="space-y-2">
+        <div className="space-y-1">
           {entries.map((entry) => (
             <div
               key={entry.id}
-              className="flex items-center justify-between rounded-lg border border-zinc-800 bg-zinc-800/50 px-4 py-3"
+              className="flex items-center justify-between border-b border-edge py-2.5 last:border-0"
             >
-              <div className="flex items-center gap-3">
-                <div className="h-2 w-2 rounded-full bg-green-500" />
+              <div className="flex items-center gap-2.5">
+                <div className="h-1.5 w-1.5 rounded-full bg-profit" />
                 <span className="font-mono text-sm">
                   {shortenAddress(entry.walletAddress)}
                 </span>
               </div>
               <div className="flex items-center gap-3">
                 {entry.maxAllocation && (
-                  <span className="text-xs text-zinc-500">
-                    Max: {Number(entry.maxAllocation).toLocaleString()}
+                  <span className="text-xs text-muted">
+                    max {Number(entry.maxAllocation).toLocaleString()}
                   </span>
                 )}
                 <button
                   onClick={() => handleRemove(entry.walletAddress)}
-                  className="rounded px-2 py-1 text-xs text-red-400 transition-colors hover:bg-red-500/10"
+                  className="text-xs text-loss hover:underline"
                 >
                   Remove
                 </button>

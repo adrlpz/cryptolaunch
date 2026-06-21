@@ -50,63 +50,54 @@ export default function AdminUsersPage() {
   const totalPages = Math.ceil(total / limit);
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12">
+    <div className="mx-auto max-w-7xl px-4 py-10">
       <div className="mb-8">
-        <Link href="/admin" className="text-sm text-purple-400 hover:underline">
-          ← Back to Admin
+        <Link href="/admin" className="text-xs text-accent hover:underline">
+          ← Admin
         </Link>
-        <h1 className="mt-2 text-3xl font-bold">User Management</h1>
-        <p className="text-zinc-500">{total} users total</p>
+        <p className="mb-1 mt-2 font-mono text-xs uppercase tracking-wider text-muted">
+          Management
+        </p>
+        <div className="flex items-end justify-between">
+          <h1 className="font-display text-3xl font-bold">Users</h1>
+          <span className="text-xs text-muted">{total} total</span>
+        </div>
       </div>
 
       {loading ? (
-        <div className="animate-pulse space-y-4">
+        <div className="space-y-2">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-16 rounded-xl bg-zinc-800" />
+            <div key={i} className="h-14 rounded bg-surface animate-pulse" />
           ))}
         </div>
       ) : (
         <>
-          <div className="overflow-x-auto rounded-xl border border-zinc-800">
+          <div className="overflow-x-auto rounded-lg border border-edge">
             <table className="w-full text-sm">
-              <thead className="border-b border-zinc-800 bg-zinc-900/50">
+              <thead className="border-b border-edge bg-surface">
                 <tr>
-                  <th className="px-4 py-3 text-left text-zinc-500">
-                    Wallet
-                  </th>
-                  <th className="px-4 py-3 text-right text-zinc-500">
-                    Balance
-                  </th>
-                  <th className="px-4 py-3 text-right text-zinc-500">
-                    Debt
-                  </th>
-                  <th className="px-4 py-3 text-center text-zinc-500">
-                    Positions
-                  </th>
-                  <th className="px-4 py-3 text-center text-zinc-500">
-                    Launches
-                  </th>
-                  <th className="px-4 py-3 text-center text-zinc-500">
-                    Liquidations
-                  </th>
-                  <th className="px-4 py-3 text-left text-zinc-500">
-                    Joined
-                  </th>
+                  {["Wallet", "Balance", "Debt", "Positions", "Launches", "Liquidations", "Joined"].map(
+                    (h) => (
+                      <th
+                        key={h}
+                        className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted"
+                      >
+                        {h}
+                      </th>
+                    )
+                  )}
                 </tr>
               </thead>
               <tbody>
                 {users.map((user) => (
-                  <tr
-                    key={user.id}
-                    className="border-b border-zinc-800/50 hover:bg-zinc-900/30"
-                  >
-                    <td className="px-4 py-3 font-mono">
+                  <tr key={user.id} className="border-b border-edge/50">
+                    <td className="px-4 py-3 font-mono text-sm">
                       {shortenAddress(user.walletAddress)}
                     </td>
-                    <td className="px-4 py-3 text-right text-green-400">
+                    <td className="px-4 py-3 font-mono text-xs text-profit">
                       ${Number(user.balance).toFixed(2)}
                     </td>
-                    <td className="px-4 py-3 text-right text-red-400">
+                    <td className="px-4 py-3 font-mono text-xs text-loss">
                       ${Number(user.totalMarginDebt).toFixed(2)}
                     </td>
                     <td className="px-4 py-3 text-center">
@@ -117,14 +108,14 @@ export default function AdminUsersPage() {
                     </td>
                     <td className="px-4 py-3 text-center">
                       {user._count.liquidationLogs > 0 ? (
-                        <span className="rounded-full bg-red-500/20 px-2 py-0.5 text-xs text-red-400">
+                        <span className="rounded bg-loss-subtle px-2 py-0.5 text-xs text-loss">
                           {user._count.liquidationLogs}
                         </span>
                       ) : (
-                        <span className="text-zinc-500">0</span>
+                        <span className="text-muted">0</span>
                       )}
                     </td>
-                    <td className="px-4 py-3 text-zinc-500">
+                    <td className="px-4 py-3 text-xs text-muted">
                       {new Date(user.createdAt).toLocaleDateString()}
                     </td>
                   </tr>
@@ -133,23 +124,22 @@ export default function AdminUsersPage() {
             </table>
           </div>
 
-          {/* Pagination */}
           {totalPages > 1 && (
-            <div className="mt-4 flex items-center justify-center gap-2">
+            <div className="mt-4 flex items-center justify-center gap-3">
               <button
                 onClick={() => setPage(Math.max(0, page - 1))}
                 disabled={page === 0}
-                className="rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-1.5 text-sm text-zinc-400 disabled:opacity-50"
+                className="rounded border border-edge px-3 py-1.5 text-xs text-muted disabled:opacity-50"
               >
                 Previous
               </button>
-              <span className="text-sm text-zinc-500">
-                Page {page + 1} of {totalPages}
+              <span className="text-xs text-muted">
+                {page + 1} / {totalPages}
               </span>
               <button
                 onClick={() => setPage(Math.min(totalPages - 1, page + 1))}
                 disabled={page >= totalPages - 1}
-                className="rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-1.5 text-sm text-zinc-400 disabled:opacity-50"
+                className="rounded border border-edge px-3 py-1.5 text-xs text-muted disabled:opacity-50"
               >
                 Next
               </button>

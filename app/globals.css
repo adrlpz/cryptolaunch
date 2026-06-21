@@ -1,21 +1,38 @@
 @import "tailwindcss";
 
 :root {
-  --background: #000000;
-  --foreground: #ededed;
+  --background: #08080A;
+  --foreground: #E8E8ED;
+  --accent: #F5A623;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-surface: #12121A;
+  --color-raised: #1A1A24;
+  --color-edge: #252530;
+  --color-accent: #F5A623;
+  --color-accent-subtle: rgba(245, 166, 35, 0.12);
+  --color-profit: #22C55E;
+  --color-profit-subtle: rgba(34, 197, 94, 0.12);
+  --color-loss: #EF4444;
+  --color-loss-subtle: rgba(239, 68, 68, 0.12);
+  --color-muted: #6B6B7B;
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-space-grotesk);
+  --font-mono: var(--font-jetbrains-mono);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Accent bar at top of page */
+.accent-bar {
+  height: 2px;
+  background: linear-gradient(to right, transparent 5%, var(--accent) 50%, transparent 95%);
 }
 
 /* Custom scrollbar */
@@ -23,29 +40,30 @@ body {
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #18181b;
+  background: #0e0e14;
 }
 ::-webkit-scrollbar-thumb {
-  background: #3f3f46;
+  background: #2a2a35;
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #52525b;
+  background: #3a3a45;
 }
 
-/* Gradient text */
-.text-gradient {
-  background: linear-gradient(to right, #a855f7, #3b82f6);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+/* Bonding curve draw animation */
+@keyframes draw-curve {
+  from { stroke-dashoffset: 1200; }
+  to { stroke-dashoffset: 0; }
 }
 
-/* Glow effect */
-.glow-purple {
-  box-shadow: 0 0 20px rgba(168, 85, 250, 0.15);
+.curve-line {
+  stroke-dasharray: 1200;
+  animation: draw-curve 2.5s ease-out forwards;
 }
 
-.glow-blue {
-  box-shadow: 0 0 20px rgba(59, 130, 246, 0.15);
+@media (prefers-reduced-motion: reduce) {
+  .curve-line {
+    animation: none;
+    stroke-dasharray: none;
+  }
 }

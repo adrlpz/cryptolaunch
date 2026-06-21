@@ -66,12 +66,12 @@ export default function AdminPage() {
 
   if (loading) {
     return (
-      <div className="mx-auto max-w-7xl px-4 py-12">
+      <div className="mx-auto max-w-7xl px-4 py-10">
         <div className="animate-pulse space-y-4">
-          <div className="h-8 w-48 rounded bg-zinc-800" />
-          <div className="grid grid-cols-4 gap-4">
+          <div className="h-8 w-48 rounded bg-surface" />
+          <div className="grid grid-cols-4 gap-3">
             {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="h-24 rounded-xl bg-zinc-800" />
+              <div key={i} className="h-20 rounded-lg bg-surface" />
             ))}
           </div>
         </div>
@@ -80,148 +80,133 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12">
-      <h1 className="mb-8 text-3xl font-bold">Admin Dashboard</h1>
-
-      {/* Navigation */}
-      <div className="mb-8 flex gap-4">
-        <Link
-          href="/admin/projects"
-          className="rounded-lg border border-zinc-700 bg-zinc-800 px-4 py-2 text-sm text-zinc-300 transition-colors hover:border-purple-500 hover:text-white"
-        >
-          Manage Projects
-        </Link>
-        <Link
-          href="/admin/users"
-          className="rounded-lg border border-zinc-700 bg-zinc-800 px-4 py-2 text-sm text-zinc-300 transition-colors hover:border-purple-500 hover:text-white"
-        >
-          Manage Users
-        </Link>
-        <Link
-          href="/admin/revenue"
-          className="rounded-lg border border-zinc-700 bg-zinc-800 px-4 py-2 text-sm text-zinc-300 transition-colors hover:border-purple-500 hover:text-white"
-        >
-          Revenue Report
-        </Link>
-      </div>
-
-      {/* Overview Stats */}
-      <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-5">
-        <StatCard
-          label="Users"
-          value={adminData?.overview.totalUsers || 0}
-          color="text-blue-400"
-        />
-        <StatCard
-          label="Projects"
-          value={adminData?.overview.activeProjects || 0}
-          suffix={`/ ${adminData?.overview.totalProjects || 0}`}
-          color="text-purple-400"
-        />
-        <StatCard
-          label="Open Positions"
-          value={adminData?.overview.openPositions || 0}
-          color="text-green-400"
-        />
-        <StatCard
-          label="Total Exposure"
-          value={`$${(adminData?.financials.totalExposure || 0).toFixed(0)}`}
-          color="text-red-400"
-        />
-        <StatCard
-          label="Liquidations"
-          value={adminData?.overview.totalLiquidations || 0}
-          color="text-yellow-400"
-        />
-      </div>
-
-      {/* Financial Overview */}
-      <div className="mb-8 rounded-xl border border-zinc-800 bg-zinc-900/50 p-6">
-        <h2 className="mb-4 text-lg font-bold">Financial Overview</h2>
-        <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
-          <div>
-            <div className="text-sm text-zinc-500">Margin Fee Revenue</div>
-            <div className="text-xl font-bold text-green-400">
-              ${(adminData?.financials.marginFeeRevenue || 0).toFixed(2)}
-            </div>
-          </div>
-          <div>
-            <div className="text-sm text-zinc-500">Platform Fee (Graduation)</div>
-            <div className="text-xl font-bold text-green-400">
-              ${(adminData?.financials.platformFeeFromGraduation || 0).toFixed(2)}
-            </div>
-          </div>
-          <div>
-            <div className="text-sm text-zinc-500">Insurance Fund (est)</div>
-            <div className="text-xl font-bold text-blue-400">
-              ${(adminData?.financials.estimatedInsuranceFund || 0).toFixed(2)}
-            </div>
-          </div>
-          <div>
-            <div className="text-sm text-zinc-500">Total Modal Locked</div>
-            <div className="text-xl font-bold text-white">
-              ${(adminData?.financials.totalModal || 0).toFixed(2)}
-            </div>
-          </div>
+    <div className="mx-auto max-w-7xl px-4 py-10">
+      <div className="mb-8 flex items-end justify-between">
+        <div>
+          <p className="mb-1 font-mono text-xs uppercase tracking-wider text-muted">
+            Control
+          </p>
+          <h1 className="font-display text-3xl font-bold">Admin</h1>
+        </div>
+        <div className="flex gap-2">
+          {[
+            ["Projects", "/admin/projects"],
+            ["Users", "/admin/users"],
+            ["Revenue", "/admin/revenue"],
+          ].map(([label, href]) => (
+            <Link
+              key={href}
+              href={href}
+              className="rounded-md border border-edge px-3 py-1.5 text-xs text-muted transition-colors hover:text-foreground"
+            >
+              {label}
+            </Link>
+          ))}
         </div>
       </div>
 
-      {/* Risk Section */}
-      <div className="mb-8 rounded-xl border border-zinc-800 bg-zinc-900/50 p-6">
-        <h2 className="mb-4 text-lg font-bold">
+      {/* Overview stats */}
+      <div className="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-5">
+        {[
+          { label: "Users", value: adminData?.overview.totalUsers || 0 },
+          {
+            label: "Active / Total",
+            value: `${adminData?.overview.activeProjects || 0} / ${adminData?.overview.totalProjects || 0}`,
+          },
+          { label: "Open Positions", value: adminData?.overview.openPositions || 0 },
+          {
+            label: "Exposure",
+            value: `$${(adminData?.financials.totalExposure || 0).toFixed(0)}`,
+            color: "text-loss",
+          },
+          {
+            label: "Liquidations",
+            value: adminData?.overview.totalLiquidations || 0,
+          },
+        ].map((stat) => (
+          <div
+            key={stat.label}
+            className="rounded-lg border border-edge bg-surface p-4"
+          >
+            <div className="text-xs text-muted">{stat.label}</div>
+            <div className={`mt-1 font-display text-xl font-bold ${stat.color ?? ""}`}>
+              {stat.value}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Financial */}
+      <div className="mb-6 rounded-lg border border-edge bg-surface p-5">
+        <h2 className="mb-3 font-display text-sm font-bold uppercase tracking-wider text-muted">
+          Financials
+        </h2>
+        <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
+          {[
+            ["Margin Fee Revenue", `$${(adminData?.financials.marginFeeRevenue || 0).toFixed(2)}`, "text-profit"],
+            ["Platform Fee", `$${(adminData?.financials.platformFeeFromGraduation || 0).toFixed(2)}`, "text-profit"],
+            ["Insurance Fund", `$${(adminData?.financials.estimatedInsuranceFund || 0).toFixed(2)}`, "text-foreground"],
+            ["Collateral Locked", `$${(adminData?.financials.totalModal || 0).toFixed(2)}`, ""],
+          ].map(([label, value, color]) => (
+            <div key={label}>
+              <div className="text-xs text-muted">{label}</div>
+              <div className={`mt-1 font-mono text-lg font-bold ${color}`}>
+                {value}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Risk */}
+      <div className="mb-6 rounded-lg border border-edge bg-surface p-5">
+        <h2 className="mb-3 font-display text-sm font-bold uppercase tracking-wider text-muted">
           Risk Monitor
           {riskData && riskData.risk.positionsAtRisk > 0 && (
-            <span className="ml-2 rounded-full bg-red-500/20 px-2 py-0.5 text-xs text-red-400">
+            <span className="ml-2 rounded bg-loss-subtle px-2 py-0.5 text-xs text-loss">
               {riskData.risk.positionsAtRisk} at risk
             </span>
           )}
         </h2>
         <div className="grid grid-cols-3 gap-6">
-          <div>
-            <div className="text-sm text-zinc-500">Avg Leverage</div>
-            <div className="text-xl font-bold">
-              {(riskData?.risk.averageLeverage || 0).toFixed(1)}%
+          {[
+            ["Avg Leverage", `${(riskData?.risk.averageLeverage || 0).toFixed(1)}%`],
+            ["At Risk (≤20%)", riskData?.risk.positionsAtRisk || 0, "text-loss"],
+            ["Total Exposure", `$${(riskData?.risk.totalExposure || 0).toFixed(0)}`],
+          ].map(([label, value, color]) => (
+            <div key={label}>
+              <div className="text-xs text-muted">{label}</div>
+              <div className={`mt-1 font-mono text-lg font-bold ${color ?? ""}`}>
+                {value}
+              </div>
             </div>
-          </div>
-          <div>
-            <div className="text-sm text-zinc-500">Positions at Risk (≤20%)</div>
-            <div className="text-xl font-bold text-red-400">
-              {riskData?.risk.positionsAtRisk || 0}
-            </div>
-          </div>
-          <div>
-            <div className="text-sm text-zinc-500">Total Exposure</div>
-            <div className="text-xl font-bold">
-              ${(riskData?.risk.totalExposure || 0).toFixed(0)}
-            </div>
-          </div>
+          ))}
         </div>
       </div>
 
-      {/* Liquidation Warnings */}
+      {/* Warnings */}
       {riskData && riskData.warnings.length > 0 && (
-        <div className="rounded-xl border border-red-500/30 bg-red-500/5 p-6">
-          <h2 className="mb-4 text-lg font-bold text-red-400">
-            ⚠️ Liquidation Warnings
+        <div className="rounded-lg border border-loss/20 bg-loss-subtle p-5">
+          <h2 className="mb-3 font-display text-sm font-bold text-loss">
+            Liquidation Warnings
           </h2>
-          <div className="space-y-3">
+          <div className="space-y-2">
             {riskData.warnings.map((w) => (
               <div
                 key={w.positionId}
-                className="flex items-center justify-between rounded-lg border border-zinc-800 bg-zinc-900/50 p-4"
+                className="flex items-center justify-between rounded border border-edge bg-surface px-4 py-3"
               >
                 <div>
-                  <span className="font-bold">{w.tokenSymbol}</span>
-                  <span className="ml-2 text-sm text-zinc-500">
-                    Position #{w.positionId.slice(0, 8)}
+                  <span className="font-display font-bold">{w.tokenSymbol}</span>
+                  <span className="ml-2 text-xs text-muted">
+                    #{w.positionId.slice(0, 8)}
                   </span>
                 </div>
                 <div className="text-right">
-                  <div className="text-sm text-zinc-400">
-                    Current: ${w.currentPrice.toFixed(6)} → Liq: $
-                    {w.liquidationPrice.toFixed(6)}
+                  <div className="font-mono text-xs text-muted">
+                    ${w.currentPrice.toFixed(6)} → ${w.liquidationPrice.toFixed(6)}
                   </div>
-                  <div className="text-sm font-medium text-red-400">
+                  <div className="font-mono text-xs font-medium text-loss">
                     {w.distancePercent.toFixed(1)}% to liquidation
                   </div>
                 </div>
@@ -230,28 +215,6 @@ export default function AdminPage() {
           </div>
         </div>
       )}
-    </div>
-  );
-}
-
-function StatCard({
-  label,
-  value,
-  suffix,
-  color = "text-white",
-}: {
-  label: string;
-  value: string | number;
-  suffix?: string;
-  color?: string;
-}) {
-  return (
-    <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-5">
-      <div className="text-sm text-zinc-500">{label}</div>
-      <div className={`text-2xl font-bold ${color}`}>
-        {value}
-        {suffix && <span className="text-sm text-zinc-500"> {suffix}</span>}
-      </div>
     </div>
   );
 }

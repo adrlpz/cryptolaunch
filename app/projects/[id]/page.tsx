@@ -106,10 +106,10 @@ export default function ProjectDetailPage() {
 
   if (loading) {
     return (
-      <div className="mx-auto max-w-7xl px-4 py-12">
-        <div className="animate-pulse">
-          <div className="mb-4 h-8 w-64 rounded bg-zinc-800" />
-          <div className="h-64 rounded-xl bg-zinc-800" />
+      <div className="mx-auto max-w-7xl px-4 py-10">
+        <div className="animate-pulse space-y-4">
+          <div className="h-8 w-64 rounded bg-surface" />
+          <div className="h-64 rounded-lg bg-surface" />
         </div>
       </div>
     );
@@ -117,8 +117,8 @@ export default function ProjectDetailPage() {
 
   if (!project) {
     return (
-      <div className="mx-auto max-w-7xl px-4 py-12 text-center">
-        <p className="text-zinc-500">Project not found.</p>
+      <div className="mx-auto max-w-7xl px-4 py-10 text-center">
+        <p className="text-muted">Project not found.</p>
       </div>
     );
   }
@@ -128,95 +128,93 @@ export default function ProjectDetailPage() {
       Number(project.totalSupply)) *
     100;
 
-  // Use pool data if available, fallback to project data
   const pool = poolData || project.liquidityPool;
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12">
+    <div className="mx-auto max-w-7xl px-4 py-10">
       {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-blue-600 text-lg font-bold">
-            {project.tokenSymbol[0]}
-          </div>
-          <div>
-            <h1 className="text-3xl font-bold">{project.tokenName}</h1>
-            <p className="text-zinc-400">
-              ${project.tokenSymbol} • {project.chain.toUpperCase()}
-            </p>
-          </div>
-          <span
-            className={`ml-auto rounded-full px-4 py-1.5 text-sm font-medium ${
-              project.status === "active"
-                ? "bg-green-500/20 text-green-400"
-                : project.status === "upcoming"
-                  ? "bg-yellow-500/20 text-yellow-400"
-                  : "bg-zinc-500/20 text-zinc-400"
-            }`}
-          >
-            {project.status.toUpperCase()}
-          </span>
+      <div className="mb-8 flex items-center gap-4">
+        <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-accent-subtle font-display text-lg font-bold text-accent">
+          {project.tokenSymbol[0]}
         </div>
+        <div className="min-w-0 flex-1">
+          <p className="font-mono text-xs uppercase tracking-wider text-muted">
+            {project.chain.toUpperCase()}
+          </p>
+          <h1 className="font-display text-3xl font-bold">
+            {project.tokenName}
+            <span className="ml-2 text-lg text-muted">
+              ${project.tokenSymbol}
+            </span>
+          </h1>
+        </div>
+        <span
+          className={`rounded-md px-3 py-1.5 text-xs font-medium ${
+            project.status === "active"
+              ? "bg-profit-subtle text-profit"
+              : project.status === "upcoming"
+                ? "bg-accent-subtle text-accent"
+                : "bg-raised text-muted"
+          }`}
+        >
+          {project.status.toUpperCase()}
+        </span>
       </div>
 
       <div className="grid gap-8 lg:grid-cols-3">
-        {/* Left: Project Info */}
-        <div className="lg:col-span-2 space-y-6">
+        {/* Left */}
+        <div className="space-y-6 lg:col-span-2">
           {/* Token Info */}
-          <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-6">
-            <h2 className="mb-4 text-lg font-bold">Token Info</h2>
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div>
-                <div className="text-zinc-500">Contract</div>
-                <div className="font-mono text-purple-400">
-                  {project.contractAddress
+          <div className="rounded-lg border border-edge bg-surface p-5">
+            <h2 className="mb-4 font-display text-sm font-bold uppercase tracking-wider text-muted">
+              Token Info
+            </h2>
+            <div className="grid grid-cols-2 gap-x-8 gap-y-4 text-sm">
+              {[
+                [
+                  "Contract",
+                  project.contractAddress
                     ? `${project.contractAddress.slice(0, 10)}...${project.contractAddress.slice(-6)}`
-                    : "Not deployed"}
+                    : "Not deployed",
+                  project.contractAddress ? "font-mono text-accent" : "text-muted",
+                ],
+                [
+                  "Price",
+                  `$${(pool?.currentPrice ?? Number(project.tokenPrice)).toFixed(6)}`,
+                  "font-mono",
+                ],
+                [
+                  "Total Supply",
+                  Number(project.totalSupply).toLocaleString(),
+                  "",
+                ],
+                [
+                  "Available",
+                  Number(project.availableSupply).toLocaleString(),
+                  "",
+                ],
+                ["Max Leverage", `${project.maxLeveragePercent}%`, ""],
+                ["LP Status", project.lpStatus, ""],
+              ].map(([label, value, extra]) => (
+                <div key={label as string}>
+                  <div className="text-xs text-muted">{label}</div>
+                  <div className={`mt-0.5 ${extra}`}>{value}</div>
                 </div>
-              </div>
-              <div>
-                <div className="text-zinc-500">Price</div>
-                <div className="text-white">
-                  ${(pool?.currentPrice ?? Number(project.tokenPrice)).toFixed(6)}
-                </div>
-              </div>
-              <div>
-                <div className="text-zinc-500">Total Supply</div>
-                <div className="text-white">
-                  {Number(project.totalSupply).toLocaleString()}
-                </div>
-              </div>
-              <div>
-                <div className="text-zinc-500">Available</div>
-                <div className="text-white">
-                  {Number(project.availableSupply).toLocaleString()}
-                </div>
-              </div>
-              <div>
-                <div className="text-zinc-500">Max Leverage</div>
-                <div className="text-white">
-                  {project.maxLeveragePercent}%
-                </div>
-              </div>
-              <div>
-                <div className="text-zinc-500">LP Status</div>
-                <div className="text-white">{project.lpStatus}</div>
-              </div>
+              ))}
             </div>
 
-            {/* Supply Bar */}
-            <div className="mt-4">
-              <div className="mb-1 flex justify-between text-xs text-zinc-500">
-                <span>Sold: {soldPercent.toFixed(1)}%</span>
+            {/* Supply bar */}
+            <div className="mt-5 border-t border-edge pt-4">
+              <div className="mb-2 flex justify-between text-xs text-muted">
+                <span>Sold {soldPercent.toFixed(1)}%</span>
                 <span>
-                  Remaining:{" "}
                   {Number(project.availableSupply).toLocaleString()}{" "}
-                  {project.tokenSymbol}
+                  {project.tokenSymbol} remaining
                 </span>
               </div>
-              <div className="h-2 w-full overflow-hidden rounded-full bg-zinc-800">
+              <div className="h-1.5 w-full overflow-hidden rounded-full bg-raised">
                 <div
-                  className="h-full rounded-full bg-gradient-to-r from-purple-500 to-blue-500"
+                  className="h-full rounded-full bg-accent transition-all"
                   style={{ width: `${soldPercent}%` }}
                 />
               </div>
@@ -241,8 +239,14 @@ export default function ProjectDetailPage() {
               launchDate={project.launchDate}
               dexPairAddress={pool.dexPairAddress}
               maxTokens={Number(pool.currentReserveToken)}
-              onBuy={() => { fetchProject(); fetchPoolData(); }}
-              onSell={() => { fetchProject(); fetchPoolData(); }}
+              onBuy={() => {
+                fetchProject();
+                fetchPoolData();
+              }}
+              onSell={() => {
+                fetchProject();
+                fetchPoolData();
+              }}
             />
           )}
 
@@ -250,7 +254,7 @@ export default function ProjectDetailPage() {
           <WhitelistManager projectId={project.id} />
         </div>
 
-        {/* Right: Margin Calculator */}
+        {/* Right */}
         <div>
           <MarginCalculator
             tokenName={project.tokenName}
