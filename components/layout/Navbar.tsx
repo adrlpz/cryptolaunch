@@ -10,17 +10,15 @@ export default function Navbar() {
     `${addr.slice(0, 6)}...${addr.slice(-4)}`;
 
   return (
-    <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-md">
+    <nav className="sticky top-0 z-50 border-b-2 border-edge bg-background/90 backdrop-blur-md">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-2.5">
-          <div className="clay-sm flex h-9 w-9 items-center justify-center !bg-gradient-to-r !from-accent !to-loss font-extrabold text-white">
+        <Link href="/" className="flex items-center gap-2">
+          <div className="brutal-sm flex h-9 w-9 items-center justify-center !bg-accent text-sm font-bold !text-background">
             L
           </div>
-          <span className="text-lg font-extrabold">CryptoLaunch</span>
+          <span className="text-lg font-bold">CryptoLaunch</span>
         </Link>
 
-        {/* Nav Links */}
         <div className="hidden items-center gap-1 md:flex">
           {[
             ["Projects", "/projects"],
@@ -31,26 +29,25 @@ export default function Navbar() {
             <Link
               key={href}
               href={href}
-              className="rounded-2xl px-3.5 py-2 text-sm font-semibold text-muted transition-all hover:bg-surface hover:text-foreground"
+              className="rounded-lg px-3.5 py-2 text-sm font-medium text-muted transition-colors hover:text-foreground"
             >
               {label}
             </Link>
           ))}
         </div>
 
-        {/* Wallet */}
         <div>
           {address ? (
             <div className="flex items-center gap-2">
-              <div className="clay-sm flex items-center gap-2 px-4 py-2">
+              <div className="brutal-sm flex items-center gap-2 px-4 py-2">
                 <div className="h-2.5 w-2.5 rounded-full bg-profit" />
-                <span className="font-mono text-sm font-bold">
+                <span className="font-mono text-sm">
                   {shortenAddress(address)}
                 </span>
               </div>
               <button
                 onClick={disconnect}
-                className="clay-sm px-3 py-2 text-xs font-semibold text-muted transition-colors hover:text-foreground"
+                className="rounded-lg border-2 border-edge px-3 py-2 text-xs font-medium text-muted transition-colors hover:text-foreground"
               >
                 Disconnect
               </button>
@@ -59,7 +56,7 @@ export default function Navbar() {
             <button
               onClick={connect}
               disabled={isConnecting}
-              className="clay-sm !bg-gradient-to-r !from-accent !to-loss px-5 py-2.5 text-sm font-extrabold text-white transition-transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
+              className="brutal-sm !bg-accent px-5 py-2.5 text-sm font-bold !text-background transition-transform hover:-translate-y-0.5 active:translate-y-0.5"
             >
               {isConnecting ? "Connecting..." : "Connect Wallet"}
             </button>
