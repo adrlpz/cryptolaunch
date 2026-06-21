@@ -32,7 +32,7 @@ export default function AdminPage() {
   }, []);
 
   if (loading) {
-    return <div className="mx-auto max-w-7xl px-4 py-10"><div className="animate-pulse space-y-4"><div className="brutal h-8 w-48" /><div className="grid grid-cols-4 gap-3">{[1, 2, 3, 4].map((i) => <div key={i} className="brutal h-20" />)}</div></div></div>;
+    return <div className="mx-auto max-w-7xl px-4 py-10"><div className="animate-pulse space-y-4"><div className="glass h-8 w-48" /><div className="grid grid-cols-4 gap-4">{[1, 2, 3, 4].map((i) => <div key={i} className="glass h-20" />)}</div></div></div>;
   }
 
   return (
@@ -44,28 +44,28 @@ export default function AdminPage() {
         </div>
         <div className="flex gap-2">
           {[["Projects", "/admin/projects"], ["Users", "/admin/users"], ["Revenue", "/admin/revenue"]].map(([label, href]) => (
-            <Link key={href} href={href} className="rounded-lg border-2 border-edge px-3 py-1.5 text-xs font-bold text-muted transition-colors hover:text-foreground">{label}</Link>
+            <Link key={href} href={href} className="glass !rounded-lg px-3 py-1.5 text-xs text-muted transition-colors hover:text-foreground">{label}</Link>
           ))}
         </div>
       </div>
 
-      <div className="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-5">
+      <div className="mb-6 grid grid-cols-2 gap-4 lg:grid-cols-5">
         {[
           { label: "Users", value: adminData?.overview.totalUsers || 0 },
           { label: "Active / Total", value: `${adminData?.overview.activeProjects || 0} / ${adminData?.overview.totalProjects || 0}` },
           { label: "Open Positions", value: adminData?.overview.openPositions || 0 },
-          { label: "Exposure", value: `$${(adminData?.financials.totalExposure || 0).toFixed(0)}`, color: "text-loss" },
+          { label: "Exposure", value: `$${(adminData?.financials.totalExposure || 0).toFixed(0)}`, accent: "text-loss" },
           { label: "Liquidations", value: adminData?.overview.totalLiquidations || 0 },
         ].map((stat) => (
-          <div key={stat.label} className="brutal p-4">
+          <div key={stat.label} className="glass p-4">
             <div className="text-xs text-muted">{stat.label}</div>
-            <div className={`mt-1 text-xl font-bold ${stat.color ?? ""}`}>{stat.value}</div>
+            <div className={`mt-1 text-xl font-bold ${stat.accent ?? ""}`}>{stat.value}</div>
           </div>
         ))}
       </div>
 
-      <div className="brutal mb-6 p-5">
-        <h2 className="mb-3 text-xs font-bold uppercase tracking-wider text-muted">Financials</h2>
+      <div className="glass mb-6 p-5">
+        <h2 className="mb-3 text-xs uppercase tracking-wider text-muted">Financials</h2>
         <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
           {[
             ["Margin Fee Revenue", `$${(adminData?.financials.marginFeeRevenue || 0).toFixed(2)}`, "text-profit"],
@@ -78,10 +78,10 @@ export default function AdminPage() {
         </div>
       </div>
 
-      <div className="brutal !shadow-[5px_5px_0px_#FF6B6B] mb-6 p-5">
-        <h2 className="mb-3 text-xs font-bold uppercase tracking-wider text-muted">
+      <div className="glass-glow mb-6 p-5">
+        <h2 className="mb-3 text-xs uppercase tracking-wider text-muted">
           Risk Monitor
-          {riskData && riskData.risk.positionsAtRisk > 0 && <span className="ml-2 rounded-md bg-loss-subtle px-2 py-0.5 text-xs text-loss">{riskData.risk.positionsAtRisk} at risk</span>}
+          {riskData && riskData.risk.positionsAtRisk > 0 && <span className="ml-2 rounded-full bg-loss/10 px-2 py-0.5 text-xs text-loss">{riskData.risk.positionsAtRisk} at risk</span>}
         </h2>
         <div className="grid grid-cols-3 gap-6">
           {[
@@ -95,13 +95,13 @@ export default function AdminPage() {
       </div>
 
       {riskData && riskData.warnings.length > 0 && (
-        <div className="brutal-accent !border-loss p-5">
-          <h2 className="mb-3 text-sm font-bold text-loss">Liquidation Warnings</h2>
+        <div className="glass-glow !border-loss/30 p-5">
+          <h2 className="mb-3 text-sm font-semibold text-loss">Liquidation Warnings</h2>
           <div className="space-y-2">
             {riskData.warnings.map((w) => (
-              <div key={w.positionId} className="brutal-sm flex items-center justify-between px-4 py-3">
-                <div><span className="font-bold">{w.tokenSymbol}</span><span className="ml-2 text-xs text-muted">#{w.positionId.slice(0, 8)}</span></div>
-                <div className="text-right"><div className="font-mono text-xs text-muted">${w.currentPrice.toFixed(6)} → ${w.liquidationPrice.toFixed(6)}</div><div className="font-mono text-xs font-bold text-loss">{w.distancePercent.toFixed(1)}% to liquidation</div></div>
+              <div key={w.positionId} className="glass flex items-center justify-between px-4 py-3">
+                <div><span className="font-medium">{w.tokenSymbol}</span><span className="ml-2 text-xs text-muted">#{w.positionId.slice(0, 8)}</span></div>
+                <div className="text-right"><div className="font-mono text-xs text-muted">${w.currentPrice.toFixed(6)} → ${w.liquidationPrice.toFixed(6)}</div><div className="font-mono text-xs text-loss">{w.distancePercent.toFixed(1)}% to liquidation</div></div>
               </div>
             ))}
           </div>

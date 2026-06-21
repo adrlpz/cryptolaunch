@@ -17,19 +17,14 @@ export default function DashboardPage() {
 
   const connectWallet = async () => {
     if (typeof window === "undefined" || !window.ethereum) return;
-    try {
-      const accounts = (await window.ethereum.request({ method: "eth_requestAccounts" })) as string[];
-      setWalletAddress(accounts[0]);
-    } catch (err) { console.error("Failed to connect:", err); }
+    try { const accounts = (await window.ethereum.request({ method: "eth_requestAccounts" })) as string[]; setWalletAddress(accounts[0]); }
+    catch (err) { console.error("Failed to connect:", err); }
   };
 
   const fetchPositions = useCallback(async () => {
     if (!walletAddress) return;
-    try {
-      const res = await fetch(`/api/margin/positions?walletAddress=${walletAddress}`);
-      const data = await res.json();
-      if (data.success) setPositions(data.data);
-    } catch (err) { console.error("Failed to fetch positions:", err); }
+    try { const res = await fetch(`/api/margin/positions?walletAddress=${walletAddress}`); const data = await res.json(); if (data.success) setPositions(data.data); }
+    catch (err) { console.error("Failed to fetch positions:", err); }
     finally { setLoading(false); }
   }, [walletAddress]);
 
@@ -56,42 +51,42 @@ export default function DashboardPage() {
 
   if (!walletAddress) {
     return (
-      <div className="mx-auto max-w-7xl px-4 py-10">
+      <div className="mx-auto max-w-7xl px-6 py-12">
         <p className="mb-1 font-mono text-xs uppercase tracking-wider text-muted">Portfolio</p>
-        <h1 className="mb-8 text-3xl font-bold">Dashboard</h1>
-        <div className="brutal p-12 text-center">
-          <p className="mb-4 text-sm text-muted">Connect your wallet to view positions.</p>
-          <button onClick={connectWallet} className="brutal-sm !bg-accent px-8 py-3 font-bold !text-background transition-transform hover:-translate-y-0.5 active:translate-y-0.5">Connect Wallet</button>
+        <h1 className="mb-10 text-3xl font-bold">Dashboard</h1>
+        <div className="glass p-14 text-center">
+          <p className="mb-6 text-muted">Connect your wallet to view positions.</p>
+          <button onClick={connectWallet} className="rounded-full bg-accent px-8 py-3 text-sm font-medium text-white transition-all hover:shadow-[0_0_20px_rgba(99,102,241,0.3)]">Connect Wallet</button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10">
+    <div className="mx-auto max-w-7xl px-6 py-12">
       <p className="mb-1 font-mono text-xs uppercase tracking-wider text-muted">Portfolio</p>
-      <h1 className="mb-8 text-3xl font-bold">Dashboard</h1>
+      <h1 className="mb-10 text-3xl font-bold">Dashboard</h1>
 
-      <div className="mb-8 grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <div className="mb-10 grid grid-cols-2 gap-4 lg:grid-cols-4">
         {[
           { label: "Open Positions", value: openPositions.length.toString(), accent: "text-accent" },
           { label: "Total Collateral", value: `$${totalModal.toFixed(2)}` },
           { label: "Total Debt", value: `$${totalDebt.toFixed(2)}`, accent: "text-loss" },
           { label: "Wallet", value: `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}`, mono: true },
         ].map((stat) => (
-          <div key={stat.label} className="brutal p-5">
-            <div className="text-xs font-medium uppercase tracking-wider text-muted">{stat.label}</div>
+          <div key={stat.label} className="glass p-5">
+            <div className="text-xs text-muted">{stat.label}</div>
             <div className={`mt-2 text-2xl font-bold ${stat.accent ?? ""} ${stat.mono ? "font-mono text-sm" : ""}`}>{stat.value}</div>
           </div>
         ))}
       </div>
 
-      <section className="mb-10">
-        <h2 className="mb-4 text-lg font-bold">Open Positions</h2>
+      <section className="mb-12">
+        <h2 className="mb-5 text-lg font-semibold">Open Positions</h2>
         {loading ? (
-          <div className="space-y-3">{[1, 2].map((i) => <div key={i} className="brutal h-56 animate-pulse" />)}</div>
+          <div className="grid gap-4 md:grid-cols-2">{[1, 2].map((i) => <div key={i} className="glass h-56 animate-pulse" />)}</div>
         ) : positionsWithPrice.length === 0 ? (
-          <div className="brutal p-8 text-center"><p className="text-sm text-muted">No open positions.</p></div>
+          <div className="glass p-10 text-center"><p className="text-sm text-muted">No open positions.</p></div>
         ) : (
           <div className="grid gap-4 md:grid-cols-2">
             {positionsWithPrice.map((pos) => (
@@ -103,23 +98,19 @@ export default function DashboardPage() {
 
       {closedPositions.length > 0 && (
         <section>
-          <h2 className="mb-4 text-lg font-bold">Position History</h2>
-          <div className="brutal overflow-hidden">
+          <h2 className="mb-5 text-lg font-semibold">Position History</h2>
+          <div className="glass overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b-2 border-edge">{["Token", "Collateral", "Lev", "PnL", "Status"].map((h) => (
-                    <th key={h} className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-muted">{h}</th>
-                  ))}</tr>
-                </thead>
+                <thead><tr className="border-b border-edge">{["Token", "Collateral", "Lev", "PnL", "Status"].map((h) => <th key={h} className="px-4 py-3 text-left text-xs text-muted">{h}</th>)}</tr></thead>
                 <tbody>
                   {closedPositions.map((pos) => (
-                    <tr key={pos.id} className="border-b border-edge/30">
-                      <td className="px-4 py-3 font-bold">{pos.project.tokenSymbol}</td>
+                    <tr key={pos.id} className="border-b border-edge/50">
+                      <td className="px-4 py-3 font-medium">{pos.project.tokenSymbol}</td>
                       <td className="px-4 py-3 font-mono text-xs">${Number(pos.modal).toFixed(2)}</td>
-                      <td className="px-4 py-3 font-medium">{pos.leveragePercent}%</td>
-                      <td className={`px-4 py-3 font-mono text-xs font-bold ${Number(pos.pnl) >= 0 ? "text-profit" : "text-loss"}`}>{Number(pos.pnl) >= 0 ? "+" : ""}{Number(pos.pnl).toFixed(2)}</td>
-                      <td className="px-4 py-3"><span className={`rounded-md px-2 py-0.5 text-xs font-bold ${pos.status === "liquidated" ? "bg-loss-subtle text-loss" : "border-2 border-edge text-muted"}`}>{pos.status}</span></td>
+                      <td className="px-4 py-3">{pos.leveragePercent}%</td>
+                      <td className={`px-4 py-3 font-mono text-xs ${Number(pos.pnl) >= 0 ? "text-profit" : "text-loss"}`}>{Number(pos.pnl) >= 0 ? "+" : ""}{Number(pos.pnl).toFixed(2)}</td>
+                      <td className="px-4 py-3"><span className={`rounded-full px-2 py-0.5 text-xs ${pos.status === "liquidated" ? "bg-loss-subtle text-loss" : "bg-surface text-muted"}`}>{pos.status}</span></td>
                     </tr>
                   ))}
                 </tbody>
