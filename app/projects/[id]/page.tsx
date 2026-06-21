@@ -50,9 +50,7 @@ export default function ProjectDetailPage() {
     try {
       const res = await fetch(`/api/projects/${params.id}`);
       const data = await res.json();
-      if (data.success) {
-        setProject(data.data);
-      }
+      if (data.success) setProject(data.data);
     } catch (err) {
       console.error("Failed to fetch project:", err);
     } finally {
@@ -64,135 +62,76 @@ export default function ProjectDetailPage() {
     try {
       const res = await fetch(`/api/pools/${params.id}`);
       const data = await res.json();
-      if (data.success) {
-        setPoolData(data.data);
-      }
+      if (data.success) setPoolData(data.data);
     } catch (err) {
       console.error("Failed to fetch pool data:", err);
     }
   }, [params.id]);
 
-  useEffect(() => {
-    fetchProject();
-    fetchPoolData();
-  }, [fetchProject, fetchPoolData]);
+  useEffect(() => { fetchProject(); fetchPoolData(); }, [fetchProject, fetchPoolData]);
 
   const handleOpenPosition = async (modal: number, leverage: number) => {
-    if (!address) {
-      alert("Please connect your wallet first");
-      return;
-    }
+    if (!address) { alert("Please connect your wallet first"); return; }
     try {
       const res = await fetch("/api/margin/open", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          walletAddress: address,
-          projectId: project?.id,
-          modal,
-          leveragePercent: leverage,
-        }),
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ walletAddress: address, projectId: project?.id, modal, leveragePercent: leverage }),
       });
       const data = await res.json();
-      if (data.success) {
-        alert(`Position opened! ID: ${data.data.id}`);
-      } else {
-        alert(`Error: ${data.error}`);
-      }
-    } catch {
-      alert("Failed to open position");
-    }
+      if (data.success) alert(`Position opened! ID: ${data.data.id}`);
+      else alert(`Error: ${data.error}`);
+    } catch { alert("Failed to open position"); }
   };
 
   if (loading) {
     return (
       <div className="mx-auto max-w-7xl px-4 py-10">
         <div className="animate-pulse space-y-4">
-          <div className="h-8 w-64 rounded bg-surface" />
-          <div className="h-64 rounded-lg bg-surface" />
+          <div className="clay h-8 w-64" />
+          <div className="clay h-64" />
         </div>
       </div>
     );
   }
 
   if (!project) {
-    return (
-      <div className="mx-auto max-w-7xl px-4 py-10 text-center">
-        <p className="text-muted">Project not found.</p>
-      </div>
-    );
+    return <div className="mx-auto max-w-7xl px-4 py-10 text-center"><p className="text-muted">Project not found.</p></div>;
   }
 
-  const soldPercent =
-    ((Number(project.totalSupply) - Number(project.availableSupply)) /
-      Number(project.totalSupply)) *
-    100;
-
+  const soldPercent = ((Number(project.totalSupply) - Number(project.availableSupply)) / Number(project.totalSupply)) * 100;
   const pool = poolData || project.liquidityPool;
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10">
       {/* Header */}
       <div className="mb-8 flex items-center gap-4">
-        <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-accent-subtle font-display text-lg font-bold text-accent">
+        <div className="clay-inset flex h-12 w-12 items-center justify-center text-lg font-extrabold text-accent">
           {project.tokenSymbol[0]}
         </div>
         <div className="min-w-0 flex-1">
-          <p className="font-mono text-xs uppercase tracking-wider text-muted">
-            {project.chain.toUpperCase()}
-          </p>
-          <h1 className="font-display text-3xl font-bold">
+          <p className="font-mono text-xs uppercase tracking-wider text-muted">{project.chain.toUpperCase()}</p>
+          <h1 className="text-3xl font-extrabold">
             {project.tokenName}
-            <span className="ml-2 text-lg text-muted">
-              ${project.tokenSymbol}
-            </span>
+            <span className="ml-2 text-lg text-muted">${project.tokenSymbol}</span>
           </h1>
         </div>
-        <span
-          className={`rounded-md px-3 py-1.5 text-xs font-medium ${
-            project.status === "active"
-              ? "bg-profit-subtle text-profit"
-              : project.status === "upcoming"
-                ? "bg-accent-subtle text-accent"
-                : "bg-raised text-muted"
-          }`}
-        >
-          {project.status.toUpperCase()}
-        </span>
+        <span className={`rounded-xl px-3 py-1.5 text-xs font-bold ${
+          project.status === "active" ? "bg-profit-subtle text-profit" :
+          project.status === "upcoming" ? "bg-accent-subtle text-accent" : "bg-raised text-muted"
+        }`}>{project.status.toUpperCase()}</span>
       </div>
 
-      <div className="grid gap-8 lg:grid-cols-3">
-        {/* Left */}
+      <div className="grid gap-6 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">
           {/* Token Info */}
-          <div className="rounded-lg border border-edge bg-surface p-5">
-            <h2 className="mb-4 font-display text-sm font-bold uppercase tracking-wider text-muted">
-              Token Info
-            </h2>
+          <div className="clay p-5">
+            <h2 className="mb-4 text-xs font-bold uppercase tracking-wider text-muted">Token Info</h2>
             <div className="grid grid-cols-2 gap-x-8 gap-y-4 text-sm">
               {[
-                [
-                  "Contract",
-                  project.contractAddress
-                    ? `${project.contractAddress.slice(0, 10)}...${project.contractAddress.slice(-6)}`
-                    : "Not deployed",
-                  project.contractAddress ? "font-mono text-accent" : "text-muted",
-                ],
-                [
-                  "Price",
-                  `$${(pool?.currentPrice ?? Number(project.tokenPrice)).toFixed(6)}`,
-                  "font-mono",
-                ],
-                [
-                  "Total Supply",
-                  Number(project.totalSupply).toLocaleString(),
-                  "",
-                ],
-                [
-                  "Available",
-                  Number(project.availableSupply).toLocaleString(),
-                  "",
-                ],
+                ["Contract", project.contractAddress ? `${project.contractAddress.slice(0, 10)}...${project.contractAddress.slice(-6)}` : "Not deployed", project.contractAddress ? "font-mono text-accent" : "text-muted"],
+                ["Price", `$${(pool?.currentPrice ?? Number(project.tokenPrice)).toFixed(6)}`, "font-mono"],
+                ["Total Supply", Number(project.totalSupply).toLocaleString(), ""],
+                ["Available", Number(project.availableSupply).toLocaleString(), ""],
                 ["Max Leverage", `${project.maxLeveragePercent}%`, ""],
                 ["LP Status", project.lpStatus, ""],
               ].map(([label, value, extra]) => (
@@ -202,26 +141,17 @@ export default function ProjectDetailPage() {
                 </div>
               ))}
             </div>
-
-            {/* Supply bar */}
-            <div className="mt-5 border-t border-edge pt-4">
+            <div className="mt-5 pt-4">
               <div className="mb-2 flex justify-between text-xs text-muted">
                 <span>Sold {soldPercent.toFixed(1)}%</span>
-                <span>
-                  {Number(project.availableSupply).toLocaleString()}{" "}
-                  {project.tokenSymbol} remaining
-                </span>
+                <span>{Number(project.availableSupply).toLocaleString()} {project.tokenSymbol} remaining</span>
               </div>
-              <div className="h-1.5 w-full overflow-hidden rounded-full bg-raised">
-                <div
-                  className="h-full rounded-full bg-accent transition-all"
-                  style={{ width: `${soldPercent}%` }}
-                />
+              <div className="clay-inset h-2 w-full overflow-hidden">
+                <div className="h-full rounded-full bg-accent transition-all" style={{ width: `${soldPercent}%` }} />
               </div>
             </div>
           </div>
 
-          {/* Bonding Curve Widget */}
           {pool && (
             <BondingCurveWidget
               projectId={project.id}
@@ -239,22 +169,14 @@ export default function ProjectDetailPage() {
               launchDate={project.launchDate}
               dexPairAddress={pool.dexPairAddress}
               maxTokens={Number(pool.currentReserveToken)}
-              onBuy={() => {
-                fetchProject();
-                fetchPoolData();
-              }}
-              onSell={() => {
-                fetchProject();
-                fetchPoolData();
-              }}
+              onBuy={() => { fetchProject(); fetchPoolData(); }}
+              onSell={() => { fetchProject(); fetchPoolData(); }}
             />
           )}
 
-          {/* Whitelist Manager */}
           <WhitelistManager projectId={project.id} />
         </div>
 
-        {/* Right */}
         <div>
           <MarginCalculator
             tokenName={project.tokenName}

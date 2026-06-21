@@ -49,10 +49,8 @@ export default function AdminPage() {
           fetch("/api/admin/dashboard"),
           fetch("/api/admin/risk"),
         ]);
-
         const admin = await adminRes.json();
         const risk = await riskRes.json();
-
         if (admin.success) setAdminData(admin.data);
         if (risk.success) setRiskData(risk.data);
       } catch (err) {
@@ -68,11 +66,9 @@ export default function AdminPage() {
     return (
       <div className="mx-auto max-w-7xl px-4 py-10">
         <div className="animate-pulse space-y-4">
-          <div className="h-8 w-48 rounded bg-surface" />
+          <div className="clay h-8 w-48" />
           <div className="grid grid-cols-4 gap-3">
-            {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="h-20 rounded-lg bg-surface" />
-            ))}
+            {[1, 2, 3, 4].map((i) => <div key={i} className="clay h-20" />)}
           </div>
         </div>
       </div>
@@ -83,10 +79,8 @@ export default function AdminPage() {
     <div className="mx-auto max-w-7xl px-4 py-10">
       <div className="mb-8 flex items-end justify-between">
         <div>
-          <p className="mb-1 font-mono text-xs uppercase tracking-wider text-muted">
-            Control
-          </p>
-          <h1 className="font-display text-3xl font-bold">Admin</h1>
+          <p className="mb-1 font-mono text-xs uppercase tracking-wider text-muted">Control</p>
+          <h1 className="text-3xl font-extrabold">Admin</h1>
         </div>
         <div className="flex gap-2">
           {[
@@ -94,78 +88,53 @@ export default function AdminPage() {
             ["Users", "/admin/users"],
             ["Revenue", "/admin/revenue"],
           ].map(([label, href]) => (
-            <Link
-              key={href}
-              href={href}
-              className="rounded-md border border-edge px-3 py-1.5 text-xs text-muted transition-colors hover:text-foreground"
-            >
+            <Link key={href} href={href} className="clay-sm px-3 py-1.5 text-xs text-muted transition-colors hover:text-foreground">
               {label}
             </Link>
           ))}
         </div>
       </div>
 
-      {/* Overview stats */}
+      {/* Overview */}
       <div className="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-5">
         {[
           { label: "Users", value: adminData?.overview.totalUsers || 0 },
-          {
-            label: "Active / Total",
-            value: `${adminData?.overview.activeProjects || 0} / ${adminData?.overview.totalProjects || 0}`,
-          },
+          { label: "Active / Total", value: `${adminData?.overview.activeProjects || 0} / ${adminData?.overview.totalProjects || 0}` },
           { label: "Open Positions", value: adminData?.overview.openPositions || 0 },
-          {
-            label: "Exposure",
-            value: `$${(adminData?.financials.totalExposure || 0).toFixed(0)}`,
-            color: "text-loss",
-          },
-          {
-            label: "Liquidations",
-            value: adminData?.overview.totalLiquidations || 0,
-          },
+          { label: "Exposure", value: `$${(adminData?.financials.totalExposure || 0).toFixed(0)}`, color: "text-loss" },
+          { label: "Liquidations", value: adminData?.overview.totalLiquidations || 0 },
         ].map((stat) => (
-          <div
-            key={stat.label}
-            className="rounded-lg border border-edge bg-surface p-4"
-          >
+          <div key={stat.label} className="clay p-4">
             <div className="text-xs text-muted">{stat.label}</div>
-            <div className={`mt-1 font-display text-xl font-bold ${stat.color ?? ""}`}>
-              {stat.value}
-            </div>
+            <div className={`mt-1 text-xl font-extrabold ${stat.color ?? ""}`}>{stat.value}</div>
           </div>
         ))}
       </div>
 
-      {/* Financial */}
-      <div className="mb-6 rounded-lg border border-edge bg-surface p-5">
-        <h2 className="mb-3 font-display text-sm font-bold uppercase tracking-wider text-muted">
-          Financials
-        </h2>
+      {/* Financials */}
+      <div className="clay mb-6 p-5">
+        <h2 className="mb-3 text-xs font-bold uppercase tracking-wider text-muted">Financials</h2>
         <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
           {[
             ["Margin Fee Revenue", `$${(adminData?.financials.marginFeeRevenue || 0).toFixed(2)}`, "text-profit"],
             ["Platform Fee", `$${(adminData?.financials.platformFeeFromGraduation || 0).toFixed(2)}`, "text-profit"],
-            ["Insurance Fund", `$${(adminData?.financials.estimatedInsuranceFund || 0).toFixed(2)}`, "text-foreground"],
+            ["Insurance Fund", `$${(adminData?.financials.estimatedInsuranceFund || 0).toFixed(2)}`, ""],
             ["Collateral Locked", `$${(adminData?.financials.totalModal || 0).toFixed(2)}`, ""],
           ].map(([label, value, color]) => (
             <div key={label}>
               <div className="text-xs text-muted">{label}</div>
-              <div className={`mt-1 font-mono text-lg font-bold ${color}`}>
-                {value}
-              </div>
+              <div className={`mt-1 font-mono text-lg font-bold ${color}`}>{value}</div>
             </div>
           ))}
         </div>
       </div>
 
       {/* Risk */}
-      <div className="mb-6 rounded-lg border border-edge bg-surface p-5">
-        <h2 className="mb-3 font-display text-sm font-bold uppercase tracking-wider text-muted">
+      <div className="clay mb-6 p-5">
+        <h2 className="mb-3 text-xs font-bold uppercase tracking-wider text-muted">
           Risk Monitor
           {riskData && riskData.risk.positionsAtRisk > 0 && (
-            <span className="ml-2 rounded bg-loss-subtle px-2 py-0.5 text-xs text-loss">
-              {riskData.risk.positionsAtRisk} at risk
-            </span>
+            <span className="ml-2 rounded-xl bg-loss-subtle px-2 py-0.5 text-xs text-loss">{riskData.risk.positionsAtRisk} at risk</span>
           )}
         </h2>
         <div className="grid grid-cols-3 gap-6">
@@ -176,9 +145,7 @@ export default function AdminPage() {
           ].map(([label, value, color]) => (
             <div key={label}>
               <div className="text-xs text-muted">{label}</div>
-              <div className={`mt-1 font-mono text-lg font-bold ${color ?? ""}`}>
-                {value}
-              </div>
+              <div className={`mt-1 font-mono text-lg font-bold ${color ?? ""}`}>{value}</div>
             </div>
           ))}
         </div>
@@ -186,29 +153,18 @@ export default function AdminPage() {
 
       {/* Warnings */}
       {riskData && riskData.warnings.length > 0 && (
-        <div className="rounded-lg border border-loss/20 bg-loss-subtle p-5">
-          <h2 className="mb-3 font-display text-sm font-bold text-loss">
-            Liquidation Warnings
-          </h2>
+        <div className="clay border border-loss/20 p-5">
+          <h2 className="mb-3 text-sm font-bold text-loss">Liquidation Warnings</h2>
           <div className="space-y-2">
             {riskData.warnings.map((w) => (
-              <div
-                key={w.positionId}
-                className="flex items-center justify-between rounded border border-edge bg-surface px-4 py-3"
-              >
+              <div key={w.positionId} className="clay-sm flex items-center justify-between px-4 py-3">
                 <div>
-                  <span className="font-display font-bold">{w.tokenSymbol}</span>
-                  <span className="ml-2 text-xs text-muted">
-                    #{w.positionId.slice(0, 8)}
-                  </span>
+                  <span className="font-extrabold">{w.tokenSymbol}</span>
+                  <span className="ml-2 text-xs text-muted">#{w.positionId.slice(0, 8)}</span>
                 </div>
                 <div className="text-right">
-                  <div className="font-mono text-xs text-muted">
-                    ${w.currentPrice.toFixed(6)} → ${w.liquidationPrice.toFixed(6)}
-                  </div>
-                  <div className="font-mono text-xs font-medium text-loss">
-                    {w.distancePercent.toFixed(1)}% to liquidation
-                  </div>
+                  <div className="font-mono text-xs text-muted">${w.currentPrice.toFixed(6)} → ${w.liquidationPrice.toFixed(6)}</div>
+                  <div className="font-mono text-xs font-bold text-loss">{w.distancePercent.toFixed(1)}% to liquidation</div>
                 </div>
               </div>
             ))}

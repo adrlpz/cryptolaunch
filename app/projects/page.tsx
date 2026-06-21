@@ -33,9 +33,7 @@ export default function ProjectsPage() {
       try {
         const res = await fetch("/api/projects");
         const data = await res.json();
-        if (data.success) {
-          setProjects(data.data);
-        }
+        if (data.success) setProjects(data.data);
       } catch (err) {
         console.error("Failed to fetch projects:", err);
       } finally {
@@ -62,40 +60,26 @@ export default function ProjectsPage() {
       );
     }
 
-    if (filterStatus !== "all") {
+    if (filterStatus !== "all")
       result = result.filter((p) => p.status === filterStatus);
-    }
-
-    if (filterChain !== "all") {
+    if (filterChain !== "all")
       result = result.filter((p) => p.chain === filterChain);
-    }
 
     switch (sortKey) {
       case "newest":
-        result.sort(
-          (a, b) =>
-            new Date(b.launchDate).getTime() - new Date(a.launchDate).getTime()
-        );
+        result.sort((a, b) => new Date(b.launchDate).getTime() - new Date(a.launchDate).getTime());
         break;
       case "price-asc":
-        result.sort(
-          (a, b) => Number(a.tokenPrice) - Number(b.tokenPrice)
-        );
+        result.sort((a, b) => Number(a.tokenPrice) - Number(b.tokenPrice));
         break;
       case "price-desc":
-        result.sort(
-          (a, b) => Number(b.tokenPrice) - Number(a.tokenPrice)
-        );
+        result.sort((a, b) => Number(b.tokenPrice) - Number(a.tokenPrice));
         break;
       case "supply-sold":
         result.sort((a, b) => {
-          const soldA =
-            (Number(a.totalSupply) - Number(a.availableSupply)) /
-            Number(a.totalSupply);
-          const soldB =
-            (Number(b.totalSupply) - Number(b.availableSupply)) /
-            Number(b.totalSupply);
-          return soldB - soldA;
+          const sA = (Number(a.totalSupply) - Number(a.availableSupply)) / Number(a.totalSupply);
+          const sB = (Number(b.totalSupply) - Number(b.availableSupply)) / Number(b.totalSupply);
+          return sB - sA;
         });
         break;
     }
@@ -111,48 +95,46 @@ export default function ProjectsPage() {
           <p className="mb-1 font-mono text-xs uppercase tracking-wider text-muted">
             Browse
           </p>
-          <h1 className="font-display text-3xl font-bold">Projects</h1>
+          <h1 className="text-3xl font-extrabold">Projects</h1>
         </div>
         <Link
           href="/launch"
-          className="rounded-lg bg-accent px-6 py-2.5 text-center text-sm font-semibold text-background transition-opacity hover:opacity-90"
+          className="clay-sm inline-block bg-accent px-6 py-2.5 text-center text-sm font-bold text-background transition-opacity hover:opacity-90"
         >
           + Launch Token
         </Link>
       </div>
 
       {/* Filters */}
-      <div className="mb-6 flex flex-col gap-3 border-b border-edge pb-6 sm:flex-row sm:items-center">
+      <div className="clay mb-6 flex flex-col gap-3 p-4 sm:flex-row sm:items-center">
         <input
           type="text"
           placeholder="Search name or symbol..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="flex-1 rounded-lg border border-edge bg-surface px-4 py-2.5 text-sm outline-none focus:border-accent"
+          className="clay-inset flex-1 px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-accent/40"
         />
 
         <div className="flex gap-1.5">
-          {(["all", "upcoming", "active", "ended"] as FilterStatus[]).map(
-            (s) => (
-              <button
-                key={s}
-                onClick={() => setFilterStatus(s)}
-                className={`rounded-md px-3 py-2 text-xs font-medium transition-colors ${
-                  filterStatus === s
-                    ? "bg-accent text-background"
-                    : "text-muted hover:text-foreground"
-                }`}
-              >
-                {s === "all" ? "All" : s.charAt(0).toUpperCase() + s.slice(1)}
-              </button>
-            )
-          )}
+          {(["all", "upcoming", "active", "ended"] as FilterStatus[]).map((s) => (
+            <button
+              key={s}
+              onClick={() => setFilterStatus(s)}
+              className={`rounded-xl px-3 py-2 text-xs font-bold transition-colors ${
+                filterStatus === s
+                  ? "bg-accent text-background"
+                  : "text-muted hover:text-foreground"
+              }`}
+            >
+              {s === "all" ? "All" : s.charAt(0).toUpperCase() + s.slice(1)}
+            </button>
+          ))}
         </div>
 
         <select
           value={filterChain}
           onChange={(e) => setFilterChain(e.target.value)}
-          className="rounded-lg border border-edge bg-surface px-3 py-2.5 text-sm outline-none"
+          className="clay-inset px-3 py-2.5 text-sm outline-none"
         >
           {chains.map((c) => (
             <option key={c} value={c}>
@@ -164,11 +146,11 @@ export default function ProjectsPage() {
         <select
           value={sortKey}
           onChange={(e) => setSortKey(e.target.value as SortKey)}
-          className="rounded-lg border border-edge bg-surface px-3 py-2.5 text-sm outline-none"
+          className="clay-inset px-3 py-2.5 text-sm outline-none"
         >
           <option value="newest">Newest</option>
-          <option value="price-asc">Price low → high</option>
-          <option value="price-desc">Price high → low</option>
+          <option value="price-asc">Price ↑</option>
+          <option value="price-desc">Price ↓</option>
           <option value="supply-sold">Most Sold</option>
         </select>
       </div>
@@ -179,90 +161,65 @@ export default function ProjectsPage() {
       </p>
 
       {loading ? (
-        <div className="space-y-2">
+        <div className="space-y-3">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-20 rounded-lg bg-surface animate-pulse" />
+            <div key={i} className="clay h-20 animate-pulse" />
           ))}
         </div>
       ) : filtered.length === 0 ? (
-        <div className="border border-edge rounded-lg p-12 text-center">
+        <div className="clay p-12 text-center">
           <p className="text-muted">
             {search || filterStatus !== "all" || filterChain !== "all"
               ? "No projects match your filters."
               : "No projects yet."}
           </p>
           {!search && filterStatus === "all" && filterChain === "all" && (
-            <Link
-              href="/launch"
-              className="mt-3 inline-block text-sm text-accent hover:underline"
-            >
+            <Link href="/launch" className="mt-3 inline-block text-sm text-accent hover:underline">
               Be the first to launch →
             </Link>
           )}
         </div>
       ) : (
-        <div className="space-y-1">
+        <div className="space-y-3">
           {filtered.map((project) => {
             const soldPercent =
-              ((Number(project.totalSupply) -
-                Number(project.availableSupply)) /
-                Number(project.totalSupply)) *
-              100;
-
-            const timeToLaunch =
-              new Date(project.launchDate).getTime() - Date.now();
-            const isUpcoming =
-              project.status === "upcoming" && timeToLaunch > 0;
+              ((Number(project.totalSupply) - Number(project.availableSupply)) / Number(project.totalSupply)) * 100;
+            const timeToLaunch = new Date(project.launchDate).getTime() - Date.now();
+            const isUpcoming = project.status === "upcoming" && timeToLaunch > 0;
 
             return (
               <Link
                 key={project.id}
                 href={`/projects/${project.id}`}
-                className="group flex items-center gap-4 border-b border-edge py-4 transition-colors hover:bg-surface/50 px-3 -mx-3 rounded-lg"
+                className="clay group flex items-center gap-4 p-4 transition-transform hover:scale-[1.005]"
               >
-                {/* Avatar */}
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-accent-subtle font-display text-sm font-bold text-accent">
+                <div className="clay-inset flex h-10 w-10 shrink-0 items-center justify-center text-sm font-bold text-accent">
                   {project.tokenSymbol[0]}
                 </div>
 
-                {/* Name + meta */}
                 <div className="min-w-0 flex-1">
-                  <div className="font-medium truncate">
-                    {project.tokenName}
-                  </div>
+                  <div className="truncate font-bold">{project.tokenName}</div>
                   <div className="text-xs text-muted">
                     ${project.tokenSymbol} · {project.chain.toUpperCase()} · max lev {project.maxLeveragePercent}%
                   </div>
                 </div>
 
-                {/* Mini progress bar */}
                 <div className="hidden w-24 sm:block">
-                  <div className="mb-1 text-right text-xs text-muted">
-                    {soldPercent.toFixed(0)}%
-                  </div>
-                  <div className="h-1 w-full overflow-hidden rounded-full bg-edge">
-                    <div
-                      className="h-full rounded-full bg-accent transition-all"
-                      style={{ width: `${soldPercent}%` }}
-                    />
+                  <div className="mb-1 text-right text-xs text-muted">{soldPercent.toFixed(0)}%</div>
+                  <div className="clay-inset h-1.5 w-full overflow-hidden">
+                    <div className="h-full rounded-full bg-accent transition-all" style={{ width: `${soldPercent}%` }} />
                   </div>
                 </div>
 
-                {/* Price */}
                 <div className="w-24 text-right font-mono text-sm">
                   ${Number(project.tokenPrice).toFixed(6)}
                 </div>
 
-                {/* Status */}
-                <span
-                  className={`rounded-md px-2.5 py-1 text-xs font-medium ${
-                    project.status === "active"
-                      ? "bg-profit-subtle text-profit"
-                      : project.status === "upcoming"
-                        ? "bg-accent-subtle text-accent"
-                        : "bg-raised text-muted"
-                  }`}
-                >
+                <span className={`rounded-xl px-2.5 py-1 text-xs font-bold ${
+                  project.status === "active" ? "bg-profit-subtle text-profit" :
+                  project.status === "upcoming" ? "bg-accent-subtle text-accent" :
+                  "bg-raised text-muted"
+                }`}>
                   {project.status}
                 </span>
 

@@ -27,122 +27,71 @@ export default function AdminUsersPage() {
     async function fetchUsers() {
       setLoading(true);
       try {
-        const res = await fetch(
-          `/api/admin/users?limit=${limit}&offset=${page * limit}`
-        );
+        const res = await fetch(`/api/admin/users?limit=${limit}&offset=${page * limit}`);
         const data = await res.json();
-        if (data.success) {
-          setUsers(data.data.users);
-          setTotal(data.data.total);
-        }
-      } catch (err) {
-        console.error("Failed to fetch users:", err);
-      } finally {
-        setLoading(false);
-      }
+        if (data.success) { setUsers(data.data.users); setTotal(data.data.total); }
+      } catch (err) { console.error("Failed to fetch users:", err); }
+      finally { setLoading(false); }
     }
     fetchUsers();
   }, [page]);
 
-  const shortenAddress = (addr: string) =>
-    `${addr.slice(0, 6)}...${addr.slice(-4)}`;
-
+  const shortenAddress = (addr: string) => `${addr.slice(0, 6)}...${addr.slice(-4)}`;
   const totalPages = Math.ceil(total / limit);
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10">
       <div className="mb-8">
-        <Link href="/admin" className="text-xs text-accent hover:underline">
-          ← Admin
-        </Link>
-        <p className="mb-1 mt-2 font-mono text-xs uppercase tracking-wider text-muted">
-          Management
-        </p>
+        <Link href="/admin" className="text-xs text-accent hover:underline">← Admin</Link>
+        <p className="mb-1 mt-2 font-mono text-xs uppercase tracking-wider text-muted">Management</p>
         <div className="flex items-end justify-between">
-          <h1 className="font-display text-3xl font-bold">Users</h1>
+          <h1 className="text-3xl font-extrabold">Users</h1>
           <span className="text-xs text-muted">{total} total</span>
         </div>
       </div>
 
       {loading ? (
         <div className="space-y-2">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="h-14 rounded bg-surface animate-pulse" />
-          ))}
+          {[1, 2, 3].map((i) => <div key={i} className="clay h-14 animate-pulse" />)}
         </div>
       ) : (
         <>
-          <div className="overflow-x-auto rounded-lg border border-edge">
-            <table className="w-full text-sm">
-              <thead className="border-b border-edge bg-surface">
-                <tr>
-                  {["Wallet", "Balance", "Debt", "Positions", "Launches", "Liquidations", "Joined"].map(
-                    (h) => (
-                      <th
-                        key={h}
-                        className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted"
-                      >
-                        {h}
-                      </th>
-                    )
-                  )}
-                </tr>
-              </thead>
-              <tbody>
-                {users.map((user) => (
-                  <tr key={user.id} className="border-b border-edge/50">
-                    <td className="px-4 py-3 font-mono text-sm">
-                      {shortenAddress(user.walletAddress)}
-                    </td>
-                    <td className="px-4 py-3 font-mono text-xs text-profit">
-                      ${Number(user.balance).toFixed(2)}
-                    </td>
-                    <td className="px-4 py-3 font-mono text-xs text-loss">
-                      ${Number(user.totalMarginDebt).toFixed(2)}
-                    </td>
-                    <td className="px-4 py-3 text-center">
-                      {user._count.marginPositions}
-                    </td>
-                    <td className="px-4 py-3 text-center">
-                      {user._count.tokenLaunches}
-                    </td>
-                    <td className="px-4 py-3 text-center">
-                      {user._count.liquidationLogs > 0 ? (
-                        <span className="rounded bg-loss-subtle px-2 py-0.5 text-xs text-loss">
-                          {user._count.liquidationLogs}
-                        </span>
-                      ) : (
-                        <span className="text-muted">0</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3 text-xs text-muted">
-                      {new Date(user.createdAt).toLocaleDateString()}
-                    </td>
+          <div className="clay overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-edge">
+                    {["Wallet", "Balance", "Debt", "Positions", "Launches", "Liquidations", "Joined"].map((h) => (
+                      <th key={h} className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-muted">{h}</th>
+                    ))}
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {users.map((user) => (
+                    <tr key={user.id} className="border-b border-edge/30">
+                      <td className="px-4 py-3 font-mono text-sm">{shortenAddress(user.walletAddress)}</td>
+                      <td className="px-4 py-3 font-mono text-xs text-profit">${Number(user.balance).toFixed(2)}</td>
+                      <td className="px-4 py-3 font-mono text-xs text-loss">${Number(user.totalMarginDebt).toFixed(2)}</td>
+                      <td className="px-4 py-3 text-center">{user._count.marginPositions}</td>
+                      <td className="px-4 py-3 text-center">{user._count.tokenLaunches}</td>
+                      <td className="px-4 py-3 text-center">
+                        {user._count.liquidationLogs > 0 ? (
+                          <span className="rounded-xl bg-loss-subtle px-2 py-0.5 text-xs text-loss">{user._count.liquidationLogs}</span>
+                        ) : <span className="text-muted">0</span>}
+                      </td>
+                      <td className="px-4 py-3 text-xs text-muted">{new Date(user.createdAt).toLocaleDateString()}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
 
           {totalPages > 1 && (
             <div className="mt-4 flex items-center justify-center gap-3">
-              <button
-                onClick={() => setPage(Math.max(0, page - 1))}
-                disabled={page === 0}
-                className="rounded border border-edge px-3 py-1.5 text-xs text-muted disabled:opacity-50"
-              >
-                Previous
-              </button>
-              <span className="text-xs text-muted">
-                {page + 1} / {totalPages}
-              </span>
-              <button
-                onClick={() => setPage(Math.min(totalPages - 1, page + 1))}
-                disabled={page >= totalPages - 1}
-                className="rounded border border-edge px-3 py-1.5 text-xs text-muted disabled:opacity-50"
-              >
-                Next
-              </button>
+              <button onClick={() => setPage(Math.max(0, page - 1))} disabled={page === 0} className="clay-sm px-3 py-1.5 text-xs text-muted disabled:opacity-50">Previous</button>
+              <span className="text-xs text-muted">{page + 1} / {totalPages}</span>
+              <button onClick={() => setPage(Math.min(totalPages - 1, page + 1))} disabled={page >= totalPages - 1} className="clay-sm px-3 py-1.5 text-xs text-muted disabled:opacity-50">Next</button>
             </div>
           )}
         </>
