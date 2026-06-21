@@ -2,9 +2,19 @@
 
 import Link from "next/link";
 import { useWallet } from "@/lib/wallet-context";
+import { useEffect, useState } from "react";
 
 export default function Navbar() {
   const { address, connect, disconnect, isConnecting } = useWallet();
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    if (!address) { setIsAdmin(false); return; }
+    fetch("/api/admin/verify", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ walletAddress: address }) })
+      .then((r) => r.json())
+      .then((d) => setIsAdmin(d.success && d.data?.isAdmin))
+      .catch(() => setIsAdmin(false));
+  }, [address]);
 
   const shortenAddress = (addr: string) =>
     `${addr.slice(0, 6)}...${addr.slice(-4)}`;
@@ -24,7 +34,7 @@ export default function Navbar() {
             ["Projects", "/projects"],
             ["Dashboard", "/dashboard"],
             ["Launch", "/launch"],
-            ["Admin", "/admin"],
+            ...(isAdmin ? [["Admin", "/admin"] as const] : []),
           ].map(([label, href]) => (
             <Link
               key={href}
