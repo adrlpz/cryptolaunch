@@ -3,11 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 
 interface WhitelistEntry {
-  id: string;
-  walletAddress: string;
-  maxAllocation: number | null;
-  addedBy: string | null;
-  createdAt: string;
+  id: string; walletAddress: string; maxAllocation: number | null; addedBy: string | null; createdAt: string;
 }
 
 interface WhitelistManagerProps {
@@ -65,36 +61,34 @@ export default function WhitelistManager({ projectId }: WhitelistManagerProps) {
     <div className="clay p-5">
       <div className="mb-4 flex items-center gap-2">
         <h2 className="text-xs font-bold uppercase tracking-wider text-muted">Whitelist</h2>
-        <span className="clay-inset rounded-lg px-2 py-0.5 text-xs text-muted">{entries.length}</span>
+        <span className="clay-inset rounded-xl px-2 py-0.5 text-xs font-bold text-muted">{entries.length}</span>
       </div>
 
       <div className="mb-4 flex gap-2">
-        <input type="text" placeholder="0x… wallet address" value={newWallet} onChange={(e) => setNewWallet(e.target.value)} className="clay-inset flex-1 px-3 py-2 font-mono text-sm outline-none focus:ring-2 focus:ring-accent/40" />
-        <input type="number" placeholder="Max alloc" value={maxAllocation} onChange={(e) => setMaxAllocation(e.target.value)} className="clay-inset w-28 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-accent/40" />
-        <button onClick={handleAdd} disabled={adding || !newWallet} className="clay-sm bg-accent px-4 py-2 text-sm font-bold text-background transition-opacity hover:opacity-90 disabled:opacity-50">
+        <input type="text" placeholder="0x… wallet address" value={newWallet} onChange={(e) => setNewWallet(e.target.value)} className="clay-inset flex-1 px-3 py-2 font-mono text-sm font-bold outline-none focus:ring-2 focus:ring-accent/30" />
+        <input type="number" placeholder="Max alloc" value={maxAllocation} onChange={(e) => setMaxAllocation(e.target.value)} className="clay-inset w-28 px-3 py-2 text-sm font-semibold outline-none focus:ring-2 focus:ring-accent/30" />
+        <button onClick={handleAdd} disabled={adding || !newWallet} className="clay-sm !bg-accent px-4 py-2 text-sm font-extrabold text-white transition-transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50">
           {adding ? "…" : "Add"}
         </button>
       </div>
 
-      {error && <div className="clay-sm mb-4 bg-loss-subtle px-4 py-2 text-sm text-loss">{error}</div>}
+      {error && <div className="clay-sm mb-4 !bg-loss-subtle px-4 py-2 text-sm font-semibold text-loss">{error}</div>}
 
       {loading ? (
-        <div className="space-y-2">
-          {[1, 2, 3].map((i) => (<div key={i} className="clay-inset h-10 animate-pulse" />))}
-        </div>
+        <div className="space-y-2">{[1, 2, 3].map((i) => <div key={i} className="clay-inset h-10 animate-pulse rounded-2xl" />)}</div>
       ) : entries.length === 0 ? (
-        <div className="clay-inset rounded-xl p-6 text-center text-xs text-muted">No wallets whitelisted yet.</div>
+        <div className="clay-inset rounded-2xl p-6 text-center text-xs font-semibold text-muted">No wallets whitelisted yet.</div>
       ) : (
         <div className="space-y-1">
           {entries.map((entry) => (
             <div key={entry.id} className="flex items-center justify-between border-b border-edge/30 py-2.5 last:border-0">
               <div className="flex items-center gap-2.5">
-                <div className="h-1.5 w-1.5 rounded-full bg-profit" />
-                <span className="font-mono text-sm">{shortenAddress(entry.walletAddress)}</span>
+                <div className="h-2 w-2 rounded-full bg-profit" />
+                <span className="font-mono text-sm font-bold">{shortenAddress(entry.walletAddress)}</span>
               </div>
               <div className="flex items-center gap-3">
-                {entry.maxAllocation && <span className="text-xs text-muted">max {Number(entry.maxAllocation).toLocaleString()}</span>}
-                <button onClick={() => handleRemove(entry.walletAddress)} className="text-xs text-loss hover:underline">Remove</button>
+                {entry.maxAllocation && <span className="text-xs font-semibold text-muted">max {Number(entry.maxAllocation).toLocaleString()}</span>}
+                <button onClick={() => handleRemove(entry.walletAddress)} className="text-xs font-bold text-loss hover:underline">Remove</button>
               </div>
             </div>
           ))}

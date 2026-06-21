@@ -33,9 +33,7 @@ export default function DashboardPage() {
     try {
       const accounts = (await window.ethereum.request({ method: "eth_requestAccounts" })) as string[];
       setWalletAddress(accounts[0]);
-    } catch (err) {
-      console.error("Failed to connect:", err);
-    }
+    } catch (err) { console.error("Failed to connect:", err); }
   };
 
   const fetchPositions = useCallback(async () => {
@@ -44,11 +42,8 @@ export default function DashboardPage() {
       const res = await fetch(`/api/margin/positions?walletAddress=${walletAddress}`);
       const data = await res.json();
       if (data.success) setPositions(data.data);
-    } catch (err) {
-      console.error("Failed to fetch positions:", err);
-    } finally {
-      setLoading(false);
-    }
+    } catch (err) { console.error("Failed to fetch positions:", err); }
+    finally { setLoading(false); }
   }, [walletAddress]);
 
   useEffect(() => { fetchPositions(); }, [fetchPositions]);
@@ -60,20 +55,13 @@ export default function DashboardPage() {
     const currentPrice = Number(position.project.tokenPrice);
     try {
       const res = await fetch(`/api/margin/close/${positionId}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ currentPrice, walletAddress }),
       });
       const data = await res.json();
-      if (data.success) {
-        alert(`Position closed! PnL: $${data.data.pnl.toFixed(2)}`);
-        fetchPositions();
-      } else {
-        alert(`Error: ${data.error}`);
-      }
-    } catch (err) {
-      console.error("Failed to close position:", err);
-    }
+      if (data.success) { alert(`Position closed! PnL: $${data.data.pnl.toFixed(2)}`); fetchPositions(); }
+      else alert(`Error: ${data.error}`);
+    } catch (err) { console.error("Failed to close position:", err); }
   };
 
   const openPositions = positions.filter((p) => p.status === "open");
@@ -86,12 +74,10 @@ export default function DashboardPage() {
     return (
       <div className="mx-auto max-w-7xl px-4 py-10">
         <p className="mb-1 font-mono text-xs uppercase tracking-wider text-muted">Portfolio</p>
-        <h1 className="mb-8 text-3xl font-extrabold">Dashboard</h1>
+        <h1 className="mb-8 text-3xl font-black">Dashboard</h1>
         <div className="clay p-12 text-center">
-          <p className="mb-4 text-sm text-muted">Connect your wallet to view positions.</p>
-          <button onClick={connectWallet} className="clay-sm bg-accent px-8 py-3 font-bold text-background transition-opacity hover:opacity-90">
-            Connect Wallet
-          </button>
+          <p className="mb-4 text-sm font-semibold text-muted">Connect your wallet to view positions.</p>
+          <button onClick={connectWallet} className="clay-sm !bg-accent px-8 py-3 font-extrabold text-white transition-transform hover:scale-[1.02] active:scale-[0.98]">Connect Wallet</button>
         </div>
       </div>
     );
@@ -100,50 +86,40 @@ export default function DashboardPage() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-10">
       <p className="mb-1 font-mono text-xs uppercase tracking-wider text-muted">Portfolio</p>
-      <h1 className="mb-8 text-3xl font-extrabold">Dashboard</h1>
+      <h1 className="mb-8 text-3xl font-black">Dashboard</h1>
 
-      {/* Stats */}
       <div className="mb-8 grid grid-cols-2 gap-3 lg:grid-cols-4">
         {[
-          { label: "Open Positions", value: openPositions.length.toString() },
+          { label: "Open Positions", value: openPositions.length.toString(), accent: "text-accent" },
           { label: "Total Collateral", value: `$${totalModal.toFixed(2)}` },
-          { label: "Total Debt", value: `$${totalDebt.toFixed(2)}`, color: "text-loss" },
+          { label: "Total Debt", value: `$${totalDebt.toFixed(2)}`, accent: "text-loss" },
           { label: "Wallet", value: `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}`, mono: true },
         ].map((stat) => (
           <div key={stat.label} className="clay p-5">
             <div className="text-xs font-bold uppercase tracking-wider text-muted">{stat.label}</div>
-            <div className={`mt-2 text-2xl font-extrabold ${stat.color ?? ""} ${stat.mono ? "font-mono text-sm" : ""}`}>{stat.value}</div>
+            <div className={`mt-2 text-2xl font-black ${stat.accent ?? ""} ${stat.mono ? "font-mono text-sm" : ""}`}>{stat.value}</div>
           </div>
         ))}
       </div>
 
-      {/* Open Positions */}
       <section className="mb-10">
-        <h2 className="mb-4 text-lg font-bold">Open Positions</h2>
+        <h2 className="mb-4 text-lg font-extrabold">Open Positions</h2>
         {loading ? (
-          <div className="space-y-3">
-            {[1, 2].map((i) => (<div key={i} className="clay h-56 animate-pulse" />))}
-          </div>
+          <div className="space-y-3">{[1, 2].map((i) => <div key={i} className="clay h-56 animate-pulse" />)}</div>
         ) : positionsWithPrice.length === 0 ? (
-          <div className="clay p-8 text-center"><p className="text-sm text-muted">No open positions.</p></div>
+          <div className="clay p-8 text-center"><p className="text-sm font-semibold text-muted">No open positions.</p></div>
         ) : (
           <div className="grid gap-4 md:grid-cols-2">
             {positionsWithPrice.map((pos) => (
-              <PositionCard
-                key={pos.id}
-                position={{ ...pos, tokenSymbol: pos.project.tokenSymbol, tokenName: pos.project.tokenName }}
-                currentPrice={pos.currentPrice}
-                onClose={handleClose}
-              />
+              <PositionCard key={pos.id} position={{ ...pos, tokenSymbol: pos.project.tokenSymbol, tokenName: pos.project.tokenName }} currentPrice={pos.currentPrice} onClose={handleClose} />
             ))}
           </div>
         )}
       </section>
 
-      {/* History */}
       {closedPositions.length > 0 && (
         <section>
-          <h2 className="mb-4 text-lg font-bold">Position History</h2>
+          <h2 className="mb-4 text-lg font-extrabold">Position History</h2>
           <div className="clay overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
@@ -157,16 +133,14 @@ export default function DashboardPage() {
                 <tbody>
                   {closedPositions.map((pos) => (
                     <tr key={pos.id} className="border-b border-edge/30">
-                      <td className="px-4 py-3 font-bold">{pos.project.tokenSymbol}</td>
+                      <td className="px-4 py-3 font-extrabold">{pos.project.tokenSymbol}</td>
                       <td className="px-4 py-3 font-mono text-xs">${Number(pos.modal).toFixed(2)}</td>
-                      <td className="px-4 py-3">{pos.leveragePercent}%</td>
+                      <td className="px-4 py-3 font-semibold">{pos.leveragePercent}%</td>
                       <td className={`px-4 py-3 font-mono text-xs font-bold ${Number(pos.pnl) >= 0 ? "text-profit" : "text-loss"}`}>
                         {Number(pos.pnl) >= 0 ? "+" : ""}{Number(pos.pnl).toFixed(2)}
                       </td>
                       <td className="px-4 py-3">
-                        <span className={`rounded-xl px-2 py-0.5 text-xs font-bold ${pos.status === "liquidated" ? "bg-loss-subtle text-loss" : "bg-raised text-muted"}`}>
-                          {pos.status}
-                        </span>
+                        <span className={`rounded-2xl px-2 py-0.5 text-xs font-bold ${pos.status === "liquidated" ? "bg-loss-subtle text-loss" : "clay-inset text-muted"}`}>{pos.status}</span>
                       </td>
                     </tr>
                   ))}

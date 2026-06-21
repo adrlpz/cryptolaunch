@@ -4,20 +4,9 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 
 interface RevenueData {
-  revenue: {
-    marginFee: { open: number; historical: number; total: number };
-    deployFee: number;
-    platformFee: number;
-    tradingFee: number;
-    total: number;
-  };
+  revenue: { marginFee: { open: number; historical: number; total: number }; deployFee: number; platformFee: number; tradingFee: number; total: number; };
   insuranceFund: number;
-  breakdown: {
-    marginPercent: number;
-    deployPercent: number;
-    platformPercent: number;
-    tradingPercent: number;
-  };
+  breakdown: { marginPercent: number; deployPercent: number; platformPercent: number; tradingPercent: number; };
 }
 
 export default function AdminRevenuePage() {
@@ -26,11 +15,8 @@ export default function AdminRevenuePage() {
 
   useEffect(() => {
     async function fetchRevenue() {
-      try {
-        const res = await fetch("/api/admin/revenue");
-        const json = await res.json();
-        if (json.success) setData(json.data);
-      } catch (err) { console.error("Failed to fetch revenue:", err); }
+      try { const res = await fetch("/api/admin/revenue"); const json = await res.json(); if (json.success) setData(json.data); }
+      catch (err) { console.error("Failed to fetch revenue:", err); }
       finally { setLoading(false); }
     }
     fetchRevenue();
@@ -41,21 +27,18 @@ export default function AdminRevenuePage() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-10">
       <div className="mb-8">
-        <Link href="/admin" className="text-xs text-accent hover:underline">← Admin</Link>
+        <Link href="/admin" className="text-xs font-bold text-accent hover:underline">← Admin</Link>
         <p className="mb-1 mt-2 font-mono text-xs uppercase tracking-wider text-muted">Analytics</p>
-        <h1 className="text-3xl font-extrabold">Revenue Report</h1>
+        <h1 className="text-3xl font-black">Revenue Report</h1>
       </div>
 
       {loading ? (
-        <div className="animate-pulse space-y-4">
-          <div className="clay h-28" />
-          <div className="clay h-56" />
-        </div>
+        <div className="animate-pulse space-y-4"><div className="clay h-28" /><div className="clay h-56" /></div>
       ) : data ? (
         <>
-          <div className="clay mb-6 border border-profit/20 p-6 text-center">
-            <div className="text-xs text-muted">Total Revenue</div>
-            <div className="mt-1 font-mono text-4xl font-extrabold text-profit">{fmt(data.revenue.total)}</div>
+          <div className="clay border-2 border-profit/30 mb-6 p-6 text-center">
+            <div className="text-xs font-semibold text-muted">Total Revenue</div>
+            <div className="mt-1 font-mono text-4xl font-black text-profit">{fmt(data.revenue.total)}</div>
           </div>
 
           <div className="mb-6 grid gap-3 md:grid-cols-2 lg:grid-cols-4">
@@ -66,9 +49,9 @@ export default function AdminRevenuePage() {
               { label: "Deploy Fee", value: fmt(data.revenue.deployFee), pct: data.breakdown.deployPercent, color: "text-muted" },
             ].map((card) => (
               <div key={card.label} className="clay p-5">
-                <div className="text-xs text-muted">{card.label}</div>
-                <div className={`mt-1 font-mono text-2xl font-extrabold ${card.color}`}>{card.value}</div>
-                <div className="mt-1 text-xs text-muted">{card.pct.toFixed(1)}% of total</div>
+                <div className="text-xs font-semibold text-muted">{card.label}</div>
+                <div className={`mt-1 font-mono text-2xl font-black ${card.color}`}>{card.value}</div>
+                <div className="mt-1 text-xs font-semibold text-muted">{card.pct.toFixed(1)}% of total</div>
               </div>
             ))}
           </div>
@@ -83,10 +66,8 @@ export default function AdminRevenuePage() {
                 { label: "Deploy Fee", pct: data.breakdown.deployPercent },
               ].map((item) => (
                 <div key={item.label}>
-                  <div className="mb-1 flex justify-between text-xs"><span className="text-muted">{item.label}</span><span className="font-mono">{item.pct.toFixed(1)}%</span></div>
-                  <div className="clay-inset h-2 w-full overflow-hidden">
-                    <div className="h-full rounded-full bg-accent" style={{ width: `${Math.min(100, item.pct)}%` }} />
-                  </div>
+                  <div className="mb-1 flex justify-between text-xs"><span className="font-semibold text-muted">{item.label}</span><span className="font-mono font-bold">{item.pct.toFixed(1)}%</span></div>
+                  <div className="clay-inset h-2.5 w-full overflow-hidden"><div className="h-full rounded-full bg-accent" style={{ width: `${Math.min(100, item.pct)}%` }} /></div>
                 </div>
               ))}
             </div>
@@ -96,20 +77,18 @@ export default function AdminRevenuePage() {
             <h2 className="mb-3 text-xs font-bold uppercase tracking-wider text-muted">Insurance Fund</h2>
             <div className="grid gap-6 md:grid-cols-2">
               <div>
-                <div className="text-xs text-muted">Estimated Fund</div>
-                <div className="mt-1 font-mono text-2xl font-extrabold">{fmt(data.insuranceFund)}</div>
+                <div className="text-xs font-semibold text-muted">Estimated Fund</div>
+                <div className="mt-1 font-mono text-2xl font-black">{fmt(data.insuranceFund)}</div>
               </div>
               <div>
-                <div className="text-xs text-muted">Purpose</div>
-                <p className="mt-1 text-sm text-muted">Cover losses when liquidation cannot execute in time. Funded by 20% of platform fees.</p>
+                <div className="text-xs font-semibold text-muted">Purpose</div>
+                <p className="mt-1 text-sm font-semibold text-muted">Cover losses when liquidation cannot execute in time. Funded by 20% of platform fees.</p>
               </div>
             </div>
           </div>
         </>
       ) : (
-        <div className="clay p-8 text-center">
-          <p className="text-sm text-muted">Failed to load revenue data.</p>
-        </div>
+        <div className="clay p-8 text-center"><p className="text-sm font-semibold text-muted">Failed to load revenue data.</p></div>
       )}
     </div>
   );

@@ -4,16 +4,8 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 
 interface UserData {
-  id: string;
-  walletAddress: string;
-  balance: number;
-  totalMarginDebt: number;
-  createdAt: string;
-  _count: {
-    marginPositions: number;
-    tokenLaunches: number;
-    liquidationLogs: number;
-  };
+  id: string; walletAddress: string; balance: number; totalMarginDebt: number; createdAt: string;
+  _count: { marginPositions: number; tokenLaunches: number; liquidationLogs: number; };
 }
 
 export default function AdminUsersPage() {
@@ -42,18 +34,16 @@ export default function AdminUsersPage() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-10">
       <div className="mb-8">
-        <Link href="/admin" className="text-xs text-accent hover:underline">← Admin</Link>
+        <Link href="/admin" className="text-xs font-bold text-accent hover:underline">← Admin</Link>
         <p className="mb-1 mt-2 font-mono text-xs uppercase tracking-wider text-muted">Management</p>
         <div className="flex items-end justify-between">
-          <h1 className="text-3xl font-extrabold">Users</h1>
-          <span className="text-xs text-muted">{total} total</span>
+          <h1 className="text-3xl font-black">Users</h1>
+          <span className="text-xs font-semibold text-muted">{total} total</span>
         </div>
       </div>
 
       {loading ? (
-        <div className="space-y-2">
-          {[1, 2, 3].map((i) => <div key={i} className="clay h-14 animate-pulse" />)}
-        </div>
+        <div className="space-y-2">{[1, 2, 3].map((i) => <div key={i} className="clay h-14 animate-pulse" />)}</div>
       ) : (
         <>
           <div className="clay overflow-hidden">
@@ -69,17 +59,17 @@ export default function AdminUsersPage() {
                 <tbody>
                   {users.map((user) => (
                     <tr key={user.id} className="border-b border-edge/30">
-                      <td className="px-4 py-3 font-mono text-sm">{shortenAddress(user.walletAddress)}</td>
-                      <td className="px-4 py-3 font-mono text-xs text-profit">${Number(user.balance).toFixed(2)}</td>
-                      <td className="px-4 py-3 font-mono text-xs text-loss">${Number(user.totalMarginDebt).toFixed(2)}</td>
-                      <td className="px-4 py-3 text-center">{user._count.marginPositions}</td>
-                      <td className="px-4 py-3 text-center">{user._count.tokenLaunches}</td>
+                      <td className="px-4 py-3 font-mono text-sm font-bold">{shortenAddress(user.walletAddress)}</td>
+                      <td className="px-4 py-3 font-mono text-xs font-bold text-profit">${Number(user.balance).toFixed(2)}</td>
+                      <td className="px-4 py-3 font-mono text-xs font-bold text-loss">${Number(user.totalMarginDebt).toFixed(2)}</td>
+                      <td className="px-4 py-3 text-center font-bold">{user._count.marginPositions}</td>
+                      <td className="px-4 py-3 text-center font-bold">{user._count.tokenLaunches}</td>
                       <td className="px-4 py-3 text-center">
                         {user._count.liquidationLogs > 0 ? (
-                          <span className="rounded-xl bg-loss-subtle px-2 py-0.5 text-xs text-loss">{user._count.liquidationLogs}</span>
-                        ) : <span className="text-muted">0</span>}
+                          <span className="rounded-2xl bg-loss-subtle px-2 py-0.5 text-xs font-bold text-loss">{user._count.liquidationLogs}</span>
+                        ) : <span className="font-semibold text-muted">0</span>}
                       </td>
-                      <td className="px-4 py-3 text-xs text-muted">{new Date(user.createdAt).toLocaleDateString()}</td>
+                      <td className="px-4 py-3 text-xs font-semibold text-muted">{new Date(user.createdAt).toLocaleDateString()}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -89,9 +79,9 @@ export default function AdminUsersPage() {
 
           {totalPages > 1 && (
             <div className="mt-4 flex items-center justify-center gap-3">
-              <button onClick={() => setPage(Math.max(0, page - 1))} disabled={page === 0} className="clay-sm px-3 py-1.5 text-xs text-muted disabled:opacity-50">Previous</button>
-              <span className="text-xs text-muted">{page + 1} / {totalPages}</span>
-              <button onClick={() => setPage(Math.min(totalPages - 1, page + 1))} disabled={page >= totalPages - 1} className="clay-sm px-3 py-1.5 text-xs text-muted disabled:opacity-50">Next</button>
+              <button onClick={() => setPage(Math.max(0, page - 1))} disabled={page === 0} className="clay-sm px-3 py-1.5 text-xs font-bold text-muted disabled:opacity-50">Previous</button>
+              <span className="text-xs font-semibold text-muted">{page + 1} / {totalPages}</span>
+              <button onClick={() => setPage(Math.min(totalPages - 1, page + 1))} disabled={page >= totalPages - 1} className="clay-sm px-3 py-1.5 text-xs font-bold text-muted disabled:opacity-50">Next</button>
             </div>
           )}
         </>

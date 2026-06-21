@@ -8,35 +8,16 @@ import BondingCurveWidget from "@/components/launch/BondingCurveWidget";
 import { useWallet } from "@/lib/wallet-context";
 
 interface PoolData {
-  id: string;
-  basePrice: number;
-  slope: number;
-  totalSold: number;
-  totalRaised: number;
-  graduationCap: number;
-  isGraduated: boolean;
-  currentReserveToken: number;
-  dexPairAddress: string | null;
-  dexName: string | null;
-  currentPrice: number | null;
-  graduationProgress: number;
+  id: string; basePrice: number; slope: number; totalSold: number; totalRaised: number;
+  graduationCap: number; isGraduated: boolean; currentReserveToken: number;
+  dexPairAddress: string | null; dexName: string | null; currentPrice: number | null; graduationProgress: number;
 }
 
 interface Project {
-  id: string;
-  tokenName: string;
-  tokenSymbol: string;
-  contractAddress: string | null;
-  tokenPrice: number;
-  totalSupply: number;
-  availableSupply: number;
-  chain: string;
-  maxLeveragePercent: number;
-  lpStatus: string;
-  status: string;
-  launchDate: string;
-  liquidityPool: PoolData | null;
-  bondingCurveAddress?: string | null;
+  id: string; tokenName: string; tokenSymbol: string; contractAddress: string | null;
+  tokenPrice: number; totalSupply: number; availableSupply: number; chain: string;
+  maxLeveragePercent: number; lpStatus: string; status: string; launchDate: string;
+  liquidityPool: PoolData | null; bondingCurveAddress?: string | null;
 }
 
 export default function ProjectDetailPage() {
@@ -51,11 +32,8 @@ export default function ProjectDetailPage() {
       const res = await fetch(`/api/projects/${params.id}`);
       const data = await res.json();
       if (data.success) setProject(data.data);
-    } catch (err) {
-      console.error("Failed to fetch project:", err);
-    } finally {
-      setLoading(false);
-    }
+    } catch (err) { console.error("Failed to fetch project:", err); }
+    finally { setLoading(false); }
   }, [params.id]);
 
   const fetchPoolData = useCallback(async () => {
@@ -63,9 +41,7 @@ export default function ProjectDetailPage() {
       const res = await fetch(`/api/pools/${params.id}`);
       const data = await res.json();
       if (data.success) setPoolData(data.data);
-    } catch (err) {
-      console.error("Failed to fetch pool data:", err);
-    }
+    } catch (err) { console.error("Failed to fetch pool data:", err); }
   }, [params.id]);
 
   useEffect(() => { fetchProject(); fetchPoolData(); }, [fetchProject, fetchPoolData]);
@@ -95,7 +71,7 @@ export default function ProjectDetailPage() {
   }
 
   if (!project) {
-    return <div className="mx-auto max-w-7xl px-4 py-10 text-center"><p className="text-muted">Project not found.</p></div>;
+    return <div className="mx-auto max-w-7xl px-4 py-10 text-center"><p className="font-semibold text-muted">Project not found.</p></div>;
   }
 
   const soldPercent = ((Number(project.totalSupply) - Number(project.availableSupply)) / Number(project.totalSupply)) * 100;
@@ -103,46 +79,44 @@ export default function ProjectDetailPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10">
-      {/* Header */}
       <div className="mb-8 flex items-center gap-4">
-        <div className="clay-inset flex h-12 w-12 items-center justify-center text-lg font-extrabold text-accent">
+        <div className="clay-inset flex h-13 w-13 items-center justify-center rounded-2xl text-lg font-black text-accent">
           {project.tokenSymbol[0]}
         </div>
         <div className="min-w-0 flex-1">
           <p className="font-mono text-xs uppercase tracking-wider text-muted">{project.chain.toUpperCase()}</p>
-          <h1 className="text-3xl font-extrabold">
+          <h1 className="text-3xl font-black">
             {project.tokenName}
             <span className="ml-2 text-lg text-muted">${project.tokenSymbol}</span>
           </h1>
         </div>
-        <span className={`rounded-xl px-3 py-1.5 text-xs font-bold ${
+        <span className={`rounded-2xl px-3 py-1.5 text-xs font-bold ${
           project.status === "active" ? "bg-profit-subtle text-profit" :
-          project.status === "upcoming" ? "bg-accent-subtle text-accent" : "bg-raised text-muted"
+          project.status === "upcoming" ? "bg-accent-subtle text-accent" : "clay-inset text-muted"
         }`}>{project.status.toUpperCase()}</span>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">
-          {/* Token Info */}
           <div className="clay p-5">
             <h2 className="mb-4 text-xs font-bold uppercase tracking-wider text-muted">Token Info</h2>
             <div className="grid grid-cols-2 gap-x-8 gap-y-4 text-sm">
               {[
-                ["Contract", project.contractAddress ? `${project.contractAddress.slice(0, 10)}...${project.contractAddress.slice(-6)}` : "Not deployed", project.contractAddress ? "font-mono text-accent" : "text-muted"],
-                ["Price", `$${(pool?.currentPrice ?? Number(project.tokenPrice)).toFixed(6)}`, "font-mono"],
-                ["Total Supply", Number(project.totalSupply).toLocaleString(), ""],
-                ["Available", Number(project.availableSupply).toLocaleString(), ""],
-                ["Max Leverage", `${project.maxLeveragePercent}%`, ""],
-                ["LP Status", project.lpStatus, ""],
+                ["Contract", project.contractAddress ? `${project.contractAddress.slice(0, 10)}...${project.contractAddress.slice(-6)}` : "Not deployed", project.contractAddress ? "font-mono font-bold text-accent" : "font-semibold text-muted"],
+                ["Price", `$${(pool?.currentPrice ?? Number(project.tokenPrice)).toFixed(6)}`, "font-mono font-bold"],
+                ["Total Supply", Number(project.totalSupply).toLocaleString(), "font-semibold"],
+                ["Available", Number(project.availableSupply).toLocaleString(), "font-semibold"],
+                ["Max Leverage", `${project.maxLeveragePercent}%`, "font-semibold"],
+                ["LP Status", project.lpStatus, "font-semibold"],
               ].map(([label, value, extra]) => (
                 <div key={label as string}>
-                  <div className="text-xs text-muted">{label}</div>
+                  <div className="text-xs font-semibold text-muted">{label}</div>
                   <div className={`mt-0.5 ${extra}`}>{value}</div>
                 </div>
               ))}
             </div>
             <div className="mt-5 pt-4">
-              <div className="mb-2 flex justify-between text-xs text-muted">
+              <div className="mb-2 flex justify-between text-xs font-semibold text-muted">
                 <span>Sold {soldPercent.toFixed(1)}%</span>
                 <span>{Number(project.availableSupply).toLocaleString()} {project.tokenSymbol} remaining</span>
               </div>
@@ -154,20 +128,15 @@ export default function ProjectDetailPage() {
 
           {pool && (
             <BondingCurveWidget
-              projectId={project.id}
-              tokenSymbol={project.tokenSymbol}
+              projectId={project.id} tokenSymbol={project.tokenSymbol}
               tokenAddress={project.contractAddress ?? undefined}
               curveAddress={project.bondingCurveAddress ?? undefined}
-              basePrice={Number(pool.basePrice)}
-              slope={Number(pool.slope)}
-              totalSold={Number(pool.totalSold)}
-              totalRaised={Number(pool.totalRaised)}
+              basePrice={Number(pool.basePrice)} slope={Number(pool.slope)}
+              totalSold={Number(pool.totalSold)} totalRaised={Number(pool.totalRaised)}
               graduationCap={Number(pool.graduationCap)}
               currentPrice={pool.currentPrice ?? Number(project.tokenPrice)}
-              isGraduated={pool.isGraduated}
-              status={project.status}
-              launchDate={project.launchDate}
-              dexPairAddress={pool.dexPairAddress}
+              isGraduated={pool.isGraduated} status={project.status}
+              launchDate={project.launchDate} dexPairAddress={pool.dexPairAddress}
               maxTokens={Number(pool.currentReserveToken)}
               onBuy={() => { fetchProject(); fetchPoolData(); }}
               onSell={() => { fetchProject(); fetchPoolData(); }}
@@ -178,13 +147,7 @@ export default function ProjectDetailPage() {
         </div>
 
         <div>
-          <MarginCalculator
-            tokenName={project.tokenName}
-            tokenSymbol={project.tokenSymbol}
-            tokenPrice={pool?.currentPrice ?? Number(project.tokenPrice)}
-            maxLeverage={project.maxLeveragePercent}
-            onOpenPosition={handleOpenPosition}
-          />
+          <MarginCalculator tokenName={project.tokenName} tokenSymbol={project.tokenSymbol} tokenPrice={pool?.currentPrice ?? Number(project.tokenPrice)} maxLeverage={project.maxLeveragePercent} onOpenPosition={handleOpenPosition} />
         </div>
       </div>
     </div>

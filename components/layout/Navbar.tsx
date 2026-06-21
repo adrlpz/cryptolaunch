@@ -14,12 +14,10 @@ export default function Navbar() {
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5">
-          <div className="clay-sm flex h-9 w-9 items-center justify-center bg-accent font-bold text-background">
+          <div className="clay-sm flex h-9 w-9 items-center justify-center !bg-gradient-to-r !from-accent !to-loss font-extrabold text-white">
             L
           </div>
-          <span className="text-lg font-bold">
-            CryptoLaunch
-          </span>
+          <span className="text-lg font-extrabold">CryptoLaunch</span>
         </Link>
 
         {/* Nav Links */}
@@ -33,7 +31,7 @@ export default function Navbar() {
             <Link
               key={href}
               href={href}
-              className="rounded-xl px-3.5 py-2 text-sm text-muted transition-colors hover:bg-raised hover:text-foreground"
+              className="rounded-2xl px-3.5 py-2 text-sm font-semibold text-muted transition-all hover:bg-surface hover:text-foreground"
             >
               {label}
             </Link>
@@ -45,14 +43,14 @@ export default function Navbar() {
           {address ? (
             <div className="flex items-center gap-2">
               <div className="clay-sm flex items-center gap-2 px-4 py-2">
-                <div className="h-2 w-2 rounded-full bg-profit" />
-                <span className="font-mono text-sm">
+                <div className="h-2.5 w-2.5 rounded-full bg-profit" />
+                <span className="font-mono text-sm font-bold">
                   {shortenAddress(address)}
                 </span>
               </div>
               <button
                 onClick={disconnect}
-                className="clay-sm px-3 py-2 text-xs text-muted transition-colors hover:text-foreground"
+                className="clay-sm px-3 py-2 text-xs font-semibold text-muted transition-colors hover:text-foreground"
               >
                 Disconnect
               </button>
@@ -61,7 +59,7 @@ export default function Navbar() {
             <button
               onClick={connect}
               disabled={isConnecting}
-              className="clay-sm bg-accent px-5 py-2.5 text-sm font-bold text-background transition-opacity hover:opacity-90 disabled:opacity-50"
+              className="clay-sm !bg-gradient-to-r !from-accent !to-loss px-5 py-2.5 text-sm font-extrabold text-white transition-transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
             >
               {isConnecting ? "Connecting..." : "Connect Wallet"}
             </button>

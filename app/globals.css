@@ -1,26 +1,26 @@
 @import "tailwindcss";
 
 :root {
-  --background: #1B1D2A;
-  --foreground: #E2E4F0;
+  --background: #F5EDE3;
+  --foreground: #3D3530;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-surface: #27293A;
-  --color-raised: #2E3148;
-  --color-inset: #1F2133;
-  --color-edge: #353854;
-  --color-accent: #818CF8;
-  --color-accent-subtle: rgba(129, 140, 248, 0.15);
-  --color-profit: #34D399;
-  --color-profit-subtle: rgba(52, 211, 153, 0.15);
-  --color-loss: #FB7185;
-  --color-loss-subtle: rgba(251, 113, 133, 0.15);
-  --color-muted: #8B8FA8;
-  --color-clay-shadow: rgba(0, 0, 0, 0.35);
-  --color-clay-highlight: rgba(255, 255, 255, 0.04);
+  --color-surface: #FDFAF6;
+  --color-raised: #FFFFFF;
+  --color-inset: #EDE5DB;
+  --color-edge: #D9CEC0;
+  --color-accent: #FF6B4A;
+  --color-accent-subtle: rgba(255, 107, 74, 0.14);
+  --color-profit: #22C67B;
+  --color-profit-subtle: rgba(34, 198, 123, 0.14);
+  --color-loss: #F04E6A;
+  --color-loss-subtle: rgba(240, 78, 106, 0.14);
+  --color-muted: #9C9085;
+  --color-purple: #8B5CF6;
+  --color-purple-subtle: rgba(139, 92, 246, 0.12);
   --font-sans: var(--font-nunito);
   --font-display: var(--font-nunito);
   --font-mono: var(--font-jetbrains-mono);
@@ -31,71 +31,65 @@ body {
   color: var(--foreground);
 }
 
-/* Clay card — the core reusable style */
+/* ── Clay primitives ── */
+
 .clay {
-  border-radius: 20px;
+  border-radius: 24px;
   background: var(--color-surface);
   box-shadow:
-    6px 6px 16px var(--color-clay-shadow),
-    -4px -4px 12px var(--color-clay-highlight),
-    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    8px 8px 24px rgba(168, 152, 132, 0.35),
+    -6px -6px 18px rgba(255, 255, 255, 0.85),
+    inset 0 2px 0 rgba(255, 255, 255, 0.7);
 }
 
-/* Smaller clay for buttons/inputs */
 .clay-sm {
-  border-radius: 12px;
+  border-radius: 16px;
   background: var(--color-raised);
   box-shadow:
-    3px 3px 8px var(--color-clay-shadow),
-    -2px -2px 6px var(--color-clay-highlight),
-    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    4px 4px 12px rgba(168, 152, 132, 0.3),
+    -3px -3px 10px rgba(255, 255, 255, 0.9),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 
-/* Inset clay (pressed-in feel for inputs, progress tracks) */
 .clay-inset {
-  border-radius: 12px;
+  border-radius: 16px;
   background: var(--color-inset);
   box-shadow:
-    inset 3px 3px 8px var(--color-clay-shadow),
-    inset -2px -2px 6px var(--color-clay-highlight);
+    inset 4px 4px 12px rgba(168, 152, 132, 0.35),
+    inset -3px -3px 10px rgba(255, 255, 255, 0.55);
+}
+
+.clay-deep {
+  border-radius: 24px;
+  background: linear-gradient(135deg, #FEFBF7 0%, #F7F0E7 100%);
+  box-shadow:
+    12px 12px 28px rgba(168, 152, 132, 0.4),
+    -8px -8px 22px rgba(255, 255, 255, 0.9),
+    inset 0 2px 0 rgba(255, 255, 255, 0.6);
 }
 
 /* Accent bar */
 .accent-bar {
-  height: 3px;
-  border-radius: 0 0 3px 3px;
-  background: linear-gradient(to right, transparent 5%, var(--color-accent) 50%, transparent 95%);
+  height: 4px;
+  border-radius: 0 0 4px 4px;
+  background: linear-gradient(to right, #FF6B4A, #FFB347, #22C67B, #8B5CF6);
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-track {
-  background: #1a1c28;
-}
-::-webkit-scrollbar-thumb {
-  background: #353854;
-  border-radius: 6px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #454868;
-}
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: #EDE5DB; border-radius: 8px; }
+::-webkit-scrollbar-thumb { background: #D0C4B4; border-radius: 8px; }
+::-webkit-scrollbar-thumb:hover { background: #BBA890; }
 
-/* Bonding curve animation */
+/* Bonding curve draw */
 @keyframes draw-curve {
   from { stroke-dashoffset: 1200; }
   to { stroke-dashoffset: 0; }
 }
-
 .curve-line {
   stroke-dasharray: 1200;
   animation: draw-curve 2.5s ease-out forwards;
 }
-
 @media (prefers-reduced-motion: reduce) {
-  .curve-line {
-    animation: none;
-    stroke-dasharray: none;
-  }
+  .curve-line { animation: none; stroke-dasharray: none; }
 }
