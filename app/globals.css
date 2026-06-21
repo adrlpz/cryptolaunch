@@ -1,28 +1,28 @@
 @import "tailwindcss";
 
 :root {
-  --background: #1A1A2E;
-  --foreground: #F0F0FF;
+  --background: #0B0F1A;
+  --foreground: #E8E8F0;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-surface: #232440;
-  --color-raised: #2A2B4A;
-  --color-inset: #16162B;
-  --color-edge: #3A3B5C;
-  --color-accent: #FFD700;
-  --color-accent-subtle: rgba(255, 215, 0, 0.15);
-  --color-profit: #4ADE80;
-  --color-profit-subtle: rgba(74, 222, 128, 0.15);
-  --color-loss: #FF6B6B;
-  --color-loss-subtle: rgba(255, 107, 107, 0.15);
-  --color-muted: #8B8CA8;
-  --color-purple: #A78BFA;
-  --color-purple-subtle: rgba(167, 139, 250, 0.15);
-  --font-sans: var(--font-space-grotesk);
-  --font-display: var(--font-space-grotesk);
+  --color-surface: rgba(255, 255, 255, 0.04);
+  --color-surface-solid: #12162A;
+  --color-raised: rgba(255, 255, 255, 0.06);
+  --color-inset: rgba(0, 0, 0, 0.3);
+  --color-edge: rgba(255, 255, 255, 0.08);
+  --color-edge-bright: rgba(255, 255, 255, 0.12);
+  --color-accent: #6366F1;
+  --color-accent-glow: rgba(99, 102, 241, 0.15);
+  --color-profit: #22C55E;
+  --color-profit-subtle: rgba(34, 197, 94, 0.12);
+  --color-loss: #EF4444;
+  --color-loss-subtle: rgba(239, 68, 68, 0.12);
+  --color-muted: #8A8CA0;
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-inter);
   --font-mono: var(--font-jetbrains-mono);
 }
 
@@ -31,47 +31,50 @@ body {
   color: var(--foreground);
 }
 
-/* ── Neobrutalism primitives ── */
+/* ── Glassmorphism primitives ── */
 
-.brutal {
-  border-radius: 12px;
-  border: 3px solid #F0F0FF;
+.glass {
+  border-radius: 16px;
+  border: 1px solid var(--color-edge);
   background: var(--color-surface);
-  box-shadow: 5px 5px 0px var(--color-accent);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
-.brutal-sm {
-  border-radius: 10px;
-  border: 2px solid #F0F0FF;
-  background: var(--color-raised);
-  box-shadow: 3px 3px 0px var(--color-accent);
+.glass-solid {
+  border-radius: 16px;
+  border: 1px solid var(--color-edge);
+  background: var(--color-surface-solid);
 }
 
-.brutal-inset {
-  border-radius: 10px;
-  border: 2px solid #3A3B5C;
+.glass-glow {
+  border-radius: 16px;
+  border: 1px solid var(--color-edge-bright);
+  background: var(--color-surface);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 0 30px var(--color-accent-glow);
+}
+
+.glass-input {
+  border-radius: 12px;
+  border: 1px solid var(--color-edge);
   background: var(--color-inset);
-  box-shadow: inset 3px 3px 6px rgba(0, 0, 0, 0.3);
-}
-
-.brutal-accent {
-  border-radius: 12px;
-  border: 3px solid var(--color-accent);
-  background: var(--color-surface);
-  box-shadow: 5px 5px 0px rgba(255, 215, 0, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 /* Accent bar */
 .accent-bar {
-  height: 4px;
-  background: var(--color-accent);
+  height: 2px;
+  background: linear-gradient(to right, transparent 5%, var(--color-accent) 50%, transparent 95%);
 }
 
 /* Scrollbar */
-::-webkit-scrollbar { width: 8px; }
-::-webkit-scrollbar-track { background: #16162B; }
-::-webkit-scrollbar-thumb { background: #3A3B5C; border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: #4A4B6C; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.08); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.14); }
 
 /* Bonding curve draw */
 @keyframes draw-curve {

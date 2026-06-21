@@ -10,13 +10,13 @@ export default function Navbar() {
     `${addr.slice(0, 6)}...${addr.slice(-4)}`;
 
   return (
-    <nav className="sticky top-0 z-50 border-b-2 border-edge bg-background/90 backdrop-blur-md">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
-        <Link href="/" className="flex items-center gap-2">
-          <div className="brutal-sm flex h-9 w-9 items-center justify-center !bg-accent text-sm font-bold !text-background">
+    <nav className="sticky top-0 z-50 border-b border-edge bg-background/80 backdrop-blur-xl">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3">
+        <Link href="/" className="flex items-center gap-2.5">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent text-sm font-bold text-white">
             L
           </div>
-          <span className="text-lg font-bold">CryptoLaunch</span>
+          <span className="text-lg font-semibold">CryptoLaunch</span>
         </Link>
 
         <div className="hidden items-center gap-1 md:flex">
@@ -29,7 +29,7 @@ export default function Navbar() {
             <Link
               key={href}
               href={href}
-              className="rounded-lg px-3.5 py-2 text-sm font-medium text-muted transition-colors hover:text-foreground"
+              className="rounded-lg px-3.5 py-2 text-sm text-muted transition-colors hover:text-foreground"
             >
               {label}
             </Link>
@@ -39,15 +39,15 @@ export default function Navbar() {
         <div>
           {address ? (
             <div className="flex items-center gap-2">
-              <div className="brutal-sm flex items-center gap-2 px-4 py-2">
-                <div className="h-2.5 w-2.5 rounded-full bg-profit" />
+              <div className="glass flex items-center gap-2 !rounded-full px-4 py-2">
+                <div className="h-2 w-2 rounded-full bg-profit" />
                 <span className="font-mono text-sm">
                   {shortenAddress(address)}
                 </span>
               </div>
               <button
                 onClick={disconnect}
-                className="rounded-lg border-2 border-edge px-3 py-2 text-xs font-medium text-muted transition-colors hover:text-foreground"
+                className="rounded-full border border-edge px-3 py-2 text-xs text-muted transition-colors hover:text-foreground"
               >
                 Disconnect
               </button>
@@ -56,7 +56,7 @@ export default function Navbar() {
             <button
               onClick={connect}
               disabled={isConnecting}
-              className="brutal-sm !bg-accent px-5 py-2.5 text-sm font-bold !text-background transition-transform hover:-translate-y-0.5 active:translate-y-0.5"
+              className="rounded-full bg-accent px-5 py-2 text-sm font-medium text-white transition-all hover:shadow-[0_0_20px_rgba(99,102,241,0.3)] disabled:opacity-50"
             >
               {isConnecting ? "Connecting..." : "Connect Wallet"}
             </button>
