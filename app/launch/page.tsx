@@ -178,7 +178,7 @@ export default function LaunchPage() {
       {step === "precomputing" && (
         <div className="glass p-8 text-center">
           <h2 className="mb-2 text-xl font-bold">Preparing Your Token</h2>
-          <p className="mb-6 text-sm text-muted">Generating vanity address ending in ...911</p>
+          <p className="mb-6 text-sm text-muted">Generating unique token address...</p>
           <div className="mx-auto max-w-md">
             <div className="mb-2 flex justify-between text-xs"><span className="text-muted">Progress</span><span className="font-mono font-bold text-accent">{progress}%</span></div>
             <div className="glass-input h-3 w-full overflow-hidden"><div className="h-full bg-accent transition-all" style={{ width: `${progress}%` }} /></div>

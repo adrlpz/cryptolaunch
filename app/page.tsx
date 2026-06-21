@@ -20,12 +20,8 @@ export default function Home() {
           <span className="text-accent">Margin Power</span>
         </h1>
         <p className="mx-auto mb-10 max-w-xl text-base leading-relaxed text-muted">
-          Create your own token with bonding curve liquidity. Trade with
-          leverage up to 50%. Vanity address ending in{" "}
-          <code className="rounded-md bg-surface px-2 py-0.5 font-mono text-sm text-accent">
-            ...911
-          </code>
-          .
+          Create your own token with bonding curve liquidity and trade with
+          leverage up to 50%.
         </p>
         <div className="flex items-center justify-center gap-4">
           <Link
@@ -63,7 +59,7 @@ export default function Home() {
             {
               num: "1",
               title: "Launch Token",
-              text: "Create your ERC-20 token with vanity address ending in ...911. Token automatically enters bonding curve for liquidity.",
+              text: "Create your ERC-20 token and launch it on a bonding curve. Token automatically enters bonding curve for liquidity.",
             },
             {
               num: "2",
