@@ -20,7 +20,7 @@ export default function PositionCard({ position, currentPrice, onClose }: Positi
   const barColor = status.distanceToLiquidation > 30 ? "bg-profit" : status.distanceToLiquidation > 10 ? "bg-accent" : "bg-loss";
 
   return (
-    <div className="brutal p-5">
+    <div className="glass p-5">
       <div className="mb-3 flex items-center justify-between">
         <div>
           <span className="font-bold">{position.tokenSymbol || "TOKEN"}</span>
@@ -40,7 +40,7 @@ export default function PositionCard({ position, currentPrice, onClose }: Positi
           <span className="text-muted">Distance to liquidation</span>
           <span className={`font-mono font-bold ${distanceColor}`}>{status.distanceToLiquidation.toFixed(1)}%</span>
         </div>
-        <div className="brutal-inset h-2 w-full overflow-hidden">
+        <div className="glass-input h-2 w-full overflow-hidden">
           <div className={`h-full transition-all ${barColor}`} style={{ width: `${Math.min(100, Math.max(0, 100 - status.distanceToLiquidation))}%` }} />
         </div>
       </div>
@@ -52,7 +52,7 @@ export default function PositionCard({ position, currentPrice, onClose }: Positi
       </div>
 
       {position.status === "open" && (
-        <button onClick={() => onClose?.(position.id)} className="brutal-sm w-full py-2.5 text-sm font-bold text-muted transition-transform hover:-translate-y-0.5 hover:text-loss active:translate-y-0.5">Close Position</button>
+        <button onClick={() => onClose?.(position.id)} className="glass w-full py-2.5 text-sm font-bold text-muted transition-transform hover:text-loss">Close Position</button>
       )}
     </div>
   );

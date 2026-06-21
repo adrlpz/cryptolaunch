@@ -51,7 +51,7 @@ export default function ProjectDetailPage() {
   };
 
   if (loading) {
-    return <div className="mx-auto max-w-7xl px-4 py-10"><div className="animate-pulse space-y-4"><div className="brutal h-8 w-64" /><div className="brutal h-64" /></div></div>;
+    return <div className="mx-auto max-w-7xl px-4 py-10"><div className="animate-pulse space-y-4"><div className="glass h-8 w-64" /><div className="glass h-64" /></div></div>;
   }
 
   if (!project) {
@@ -64,7 +64,7 @@ export default function ProjectDetailPage() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-10">
       <div className="mb-8 flex items-center gap-4">
-        <div className="brutal-inset flex h-12 w-12 items-center justify-center text-lg font-bold text-accent">{project.tokenSymbol[0]}</div>
+        <div className="glass-input flex h-12 w-12 items-center justify-center text-lg font-bold text-accent">{project.tokenSymbol[0]}</div>
         <div className="min-w-0 flex-1">
           <p className="font-mono text-xs uppercase tracking-wider text-muted">{project.chain.toUpperCase()}</p>
           <h1 className="text-3xl font-bold">{project.tokenName} <span className="text-lg text-muted">${project.tokenSymbol}</span></h1>
@@ -74,7 +74,7 @@ export default function ProjectDetailPage() {
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">
-          <div className="brutal p-5">
+          <div className="glass p-5">
             <h2 className="mb-4 text-xs font-bold uppercase tracking-wider text-muted">Token Info</h2>
             <div className="grid grid-cols-2 gap-x-8 gap-y-4 text-sm">
               {[
@@ -90,7 +90,7 @@ export default function ProjectDetailPage() {
             </div>
             <div className="mt-5 border-t-2 border-edge pt-4">
               <div className="mb-2 flex justify-between text-xs text-muted"><span>Sold {soldPercent.toFixed(1)}%</span><span>{Number(project.availableSupply).toLocaleString()} {project.tokenSymbol} remaining</span></div>
-              <div className="brutal-inset h-2 w-full overflow-hidden"><div className="h-full bg-accent transition-all" style={{ width: `${soldPercent}%` }} /></div>
+              <div className="glass-input h-2 w-full overflow-hidden"><div className="h-full bg-accent transition-all" style={{ width: `${soldPercent}%` }} /></div>
             </div>
           </div>
 

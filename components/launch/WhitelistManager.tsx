@@ -49,26 +49,26 @@ export default function WhitelistManager({ projectId }: WhitelistManagerProps) {
   const shortenAddress = (addr: string) => `${addr.slice(0, 6)}...${addr.slice(-4)}`;
 
   return (
-    <div className="brutal p-5">
+    <div className="glass p-5">
       <div className="mb-4 flex items-center gap-2">
         <h2 className="text-xs font-bold uppercase tracking-wider text-muted">Whitelist</h2>
         <span className="rounded-md border-2 border-edge px-2 py-0.5 text-xs font-bold text-muted">{entries.length}</span>
       </div>
 
       <div className="mb-4 flex gap-2">
-        <input type="text" placeholder="0x… wallet address" value={newWallet} onChange={(e) => setNewWallet(e.target.value)} className="brutal-inset flex-1 px-3 py-2 font-mono text-sm outline-none focus:border-accent" />
-        <input type="number" placeholder="Max alloc" value={maxAllocation} onChange={(e) => setMaxAllocation(e.target.value)} className="brutal-inset w-28 px-3 py-2 text-sm outline-none focus:border-accent" />
-        <button onClick={handleAdd} disabled={adding || !newWallet} className="brutal-sm !bg-accent px-4 py-2 text-sm font-bold !text-background transition-transform hover:-translate-y-0.5 active:translate-y-0.5 disabled:opacity-50">
+        <input type="text" placeholder="0x… wallet address" value={newWallet} onChange={(e) => setNewWallet(e.target.value)} className="glass-input flex-1 px-3 py-2 font-mono text-sm outline-none focus:border-accent" />
+        <input type="number" placeholder="Max alloc" value={maxAllocation} onChange={(e) => setMaxAllocation(e.target.value)} className="glass-input w-28 px-3 py-2 text-sm outline-none focus:border-accent" />
+        <button onClick={handleAdd} disabled={adding || !newWallet} className="glass bg-accent px-4 py-2 text-sm font-bold text-white transition-transform disabled:opacity-50">
           {adding ? "…" : "Add"}
         </button>
       </div>
 
-      {error && <div className="brutal-sm mb-4 !border-loss bg-loss-subtle px-4 py-2 text-sm font-bold text-loss !shadow-none">{error}</div>}
+      {error && <div className="glass mb-4 bg-loss/10 text-loss px-4 py-2 text-sm font-bold">{error}</div>}
 
       {loading ? (
-        <div className="space-y-2">{[1, 2, 3].map((i) => <div key={i} className="brutal-inset h-10 animate-pulse" />)}</div>
+        <div className="space-y-2">{[1, 2, 3].map((i) => <div key={i} className="glass-input h-10 animate-pulse" />)}</div>
       ) : entries.length === 0 ? (
-        <div className="brutal-inset p-6 text-center text-xs text-muted">No wallets whitelisted yet.</div>
+        <div className="glass-input p-6 text-center text-xs text-muted">No wallets whitelisted yet.</div>
       ) : (
         <div className="space-y-1">
           {entries.map((entry) => (

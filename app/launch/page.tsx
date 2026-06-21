@@ -80,7 +80,7 @@ export default function LaunchPage() {
   };
 
   const lbl = "mb-1.5 block text-xs font-bold uppercase tracking-wider text-muted";
-  const inp = "brutal-inset w-full px-4 py-2.5 text-sm font-medium outline-none focus:border-accent";
+  const inp = "glass-input w-full px-4 py-2.5 text-sm font-medium outline-none focus:border-accent";
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-10">
@@ -91,9 +91,9 @@ export default function LaunchPage() {
       </div>
 
       {!walletAddress ? (
-        <div className="brutal mb-6 p-6 text-center">
+        <div className="glass mb-6 p-6 text-center">
           <p className="mb-4 text-sm text-muted">Connect your wallet to begin.</p>
-          <button onClick={connectWallet} className="brutal-sm !bg-accent px-8 py-3 font-bold !text-background transition-transform hover:-translate-y-0.5 active:translate-y-0.5">Connect Wallet</button>
+          <button onClick={connectWallet} className="glass bg-accent px-8 py-3 font-bold text-white">Connect Wallet</button>
         </div>
       ) : (
         <div className="mb-6 flex items-center gap-2 border-b-2 border-edge pb-4">
@@ -102,11 +102,11 @@ export default function LaunchPage() {
         </div>
       )}
 
-      {error && <div className="brutal-sm mb-6 !border-loss bg-loss-subtle px-4 py-3 text-sm font-bold text-loss !shadow-none">{error}</div>}
+      {error && <div className="glass mb-6 bg-loss/10 text-loss px-4 py-3 text-sm font-bold">{error}</div>}
 
       {step === "form" && (
         <div className="space-y-6">
-          <section className="brutal p-6">
+          <section className="glass p-6">
             <h2 className="mb-4 text-base font-bold">Token Information</h2>
             <div className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2">
@@ -120,7 +120,7 @@ export default function LaunchPage() {
             </div>
           </section>
 
-          <section className="brutal !shadow-[5px_5px_0px_#A78BFA] p-6">
+          <section className="glass p-6">
             <h2 className="mb-4 text-base font-bold">Bonding Curve</h2>
             <div className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2">
@@ -133,10 +133,10 @@ export default function LaunchPage() {
                   }} className={inp} placeholder="10" />
                 </div>
                 <div><label className={lbl}>Base Price (ETH) <span className="normal-case tracking-normal text-muted">auto</span></label>
-                  <input type="text" value={form.basePrice} readOnly className="brutal-inset w-full px-4 py-2.5 text-sm text-muted outline-none" />
+                  <input type="text" value={form.basePrice} readOnly className="glass-input w-full px-4 py-2.5 text-sm text-muted outline-none" />
                 </div>
               </div>
-              <div className="brutal-inset p-3">
+              <div className="glass-input p-3">
                 <div className="flex items-center justify-between text-xs"><span className="text-muted">Formula</span><span className="font-mono font-bold">slope = 2 × (cap − base×supply) / supply²</span></div>
                 <div className="mt-1.5 flex items-center justify-between text-xs"><span className="text-muted">Slope</span><span className="font-mono font-bold text-accent">{estimateSlope() ?? "—"}</span></div>
                 <div className="mt-1.5 flex items-center justify-between text-xs"><span className="text-muted">Graduation at</span><span className="font-mono font-bold text-profit">{form.graduationCap ? `${form.graduationCap} ETH` : "—"}</span></div>
@@ -152,7 +152,7 @@ export default function LaunchPage() {
             </div>
           </section>
 
-          <section className="brutal !shadow-[5px_5px_0px_#4ADE80] p-6">
+          <section className="glass p-6">
             <h2 className="mb-4 text-base font-bold">Tokenomics</h2>
             <div className="grid grid-cols-3 gap-3">
               {[
@@ -160,7 +160,7 @@ export default function LaunchPage() {
                 { pct: "15%", label: "You (locked 6mo)", color: "text-foreground" },
                 { pct: "5%", label: "Platform", color: "text-profit" },
               ].map((t) => (
-                <div key={t.label} className="brutal-inset p-4 text-center">
+                <div key={t.label} className="glass-input p-4 text-center">
                   <div className={`text-2xl font-bold ${t.color}`}>{t.pct}</div>
                   <div className="mt-1 text-xs text-muted">{t.label}</div>
                 </div>
@@ -169,30 +169,30 @@ export default function LaunchPage() {
           </section>
 
           <button onClick={handlePrecompute} disabled={loading || !walletAddress || !form.tokenName || !form.tokenSymbol}
-            className="brutal-sm w-full !bg-accent py-3.5 text-sm font-bold !text-background transition-transform hover:-translate-y-0.5 active:translate-y-0.5 disabled:opacity-50">
+            className="glass w-full bg-accent py-3.5 text-sm font-bold text-white disabled:opacity-50">
             Continue →
           </button>
         </div>
       )}
 
       {step === "precomputing" && (
-        <div className="brutal p-8 text-center">
+        <div className="glass p-8 text-center">
           <h2 className="mb-2 text-xl font-bold">Preparing Your Token</h2>
           <p className="mb-6 text-sm text-muted">Generating vanity address ending in ...911</p>
           <div className="mx-auto max-w-md">
             <div className="mb-2 flex justify-between text-xs"><span className="text-muted">Progress</span><span className="font-mono font-bold text-accent">{progress}%</span></div>
-            <div className="brutal-inset h-3 w-full overflow-hidden"><div className="h-full bg-accent transition-all" style={{ width: `${progress}%` }} /></div>
+            <div className="glass-input h-3 w-full overflow-hidden"><div className="h-full bg-accent transition-all" style={{ width: `${progress}%` }} /></div>
           </div>
         </div>
       )}
 
       {step === "review" && precompute && (
         <div className="space-y-4">
-          <div className="brutal-accent p-5 text-center">
+          <div className="glass-glow p-5 text-center">
             <div className="text-lg font-bold text-accent">Ready to Deploy</div>
             <p className="mt-1 text-sm text-muted">Review below, then sign the transaction.</p>
           </div>
-          <div className="brutal p-5">
+          <div className="glass p-5">
             <h2 className="mb-3 text-xs font-bold uppercase tracking-wider text-muted">Summary</h2>
             {[["Name", form.tokenName], ["Symbol", form.tokenSymbol], ["Supply", Number(form.totalSupply).toLocaleString()], ["Base Price", `${form.basePrice} ETH`], ["Grad Cap", `${form.graduationCap} ETH`], ["Salt", `${precompute.salt.slice(0, 10)}...`]].map(([label, value]) => (
               <div key={label} className="flex items-center justify-between border-b border-edge/30 py-2.5 last:border-0">
@@ -201,10 +201,10 @@ export default function LaunchPage() {
               </div>
             ))}
           </div>
-          <div className="brutal-sm !border-accent bg-accent-subtle p-4 text-sm font-bold text-accent !shadow-none">Gas paid from your wallet. Ensure ~0.01 ETH on Sepolia.</div>
+          <div className="glass border-accent bg-accent-subtle p-4 text-sm font-bold text-accent">Gas paid from your wallet. Ensure ~0.01 ETH on Sepolia.</div>
           <div className="flex gap-3">
-            <button onClick={() => setStep("form")} className="brutal-sm flex-1 py-3 text-sm font-bold text-muted transition-transform hover:-translate-y-0.5 active:translate-y-0.5">Back</button>
-            <button onClick={handleDeploy} disabled={loading} className="brutal-sm flex-1 !bg-accent py-3 text-sm font-bold !text-background transition-transform hover:-translate-y-0.5 active:translate-y-0.5 disabled:opacity-50">
+            <button onClick={() => setStep("form")} className="glass flex-1 py-3 text-sm font-bold text-muted">Back</button>
+            <button onClick={handleDeploy} disabled={loading} className="glass flex-1 bg-accent py-3 text-sm font-bold text-white disabled:opacity-50">
               {loading ? "Signing..." : "Sign & Deploy"}
             </button>
           </div>
@@ -212,7 +212,7 @@ export default function LaunchPage() {
       )}
 
       {step === "deploying" && (
-        <div className="brutal p-8 text-center">
+        <div className="glass p-8 text-center">
           <h2 className="mb-2 text-xl font-bold">Deploying Token</h2>
           <p className="text-sm text-muted">Sign in your wallet, then wait for confirmation...</p>
           {txHash && <p className="mt-4 font-mono text-xs text-muted">TX: {txHash.slice(0, 10)}...{txHash.slice(-8)}</p>}
@@ -220,10 +220,10 @@ export default function LaunchPage() {
       )}
 
       {step === "done" && (
-        <div className="brutal !shadow-[5px_5px_0px_#4ADE80] p-8 text-center">
+        <div className="glass p-8 text-center">
           <h2 className="mb-2 text-xl font-bold text-profit">Token Deployed</h2>
           <p className="mb-6 text-sm text-muted">Live on-chain with bonding curve liquidity.</p>
-          <a href={`/projects/${projectId}`} className="brutal-sm inline-block !bg-accent px-6 py-2.5 text-sm font-bold !text-background transition-transform hover:-translate-y-0.5 active:translate-y-0.5">View Project →</a>
+          <a href={`/projects/${projectId}`} className="glass inline-block bg-accent px-6 py-2.5 text-sm font-bold text-white">View Project →</a>
         </div>
       )}
     </div>

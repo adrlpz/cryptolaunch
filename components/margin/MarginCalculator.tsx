@@ -17,24 +17,24 @@ export default function MarginCalculator({ tokenName, tokenSymbol, tokenPrice, m
   const lbl = "mb-1.5 block text-xs font-bold uppercase tracking-wider text-muted";
 
   return (
-    <div className="brutal !shadow-[5px_5px_0px_#FF6B6B] p-5">
+    <div className="glass p-5">
       <h2 className="mb-4 text-xs font-bold uppercase tracking-wider text-muted">Margin Calculator</h2>
 
       <div className="mb-4">
         <label className={lbl}>Collateral (USDT)</label>
-        <input type="number" value={modal} onChange={(e) => setModal(Number(e.target.value) || 0)} min={1} className="brutal-inset w-full px-4 py-2.5 font-mono text-sm outline-none focus:border-accent" placeholder="100" />
+        <input type="number" value={modal} onChange={(e) => setModal(Number(e.target.value) || 0)} min={1} className="glass-input w-full px-4 py-2.5 font-mono text-sm outline-none focus:border-accent" placeholder="100" />
       </div>
 
       <div className="mb-5">
         <label className={lbl}>Leverage ({MARGIN_FEE_PERCENT}% fee on debt)</label>
         <div className="flex gap-1.5">
           {availableLevels.map((level) => (
-            <button key={level} onClick={() => setLeverage(level)} className={`flex-1 rounded-lg py-2 text-xs font-bold transition-colors ${leverage === level ? "bg-accent !text-background" : "brutal-inset text-muted hover:text-foreground"}`}>{level}%</button>
+            <button key={level} onClick={() => setLeverage(level)} className={`flex-1 rounded-lg py-2 text-xs font-bold transition-colors ${leverage === level ? "bg-accent text-white" : "glass-input text-muted hover:text-foreground"}`}>{level}%</button>
           ))}
         </div>
       </div>
 
-      <div className="brutal-inset mb-5 p-4">
+      <div className="glass-input mb-5 p-4">
         {[["Debt", `$${calc.debtAmount.toFixed(2)}`, ""], [`Fee (${MARGIN_FEE_PERCENT}%)`, `-$${calc.feeAmount.toFixed(2)}`, "text-loss font-bold"], ["After fee", `$${calc.modalAfterFee.toFixed(2)}`, ""], ["Total buying power", `$${calc.totalFunds.toFixed(2)}`, "text-profit font-bold"]].map(([label, value, extra]) => (
           <div key={label} className="flex items-center justify-between border-b border-edge/30 py-2 text-xs last:border-0"><span className="text-muted">{label}</span><span className={`font-mono ${extra}`}>{value}</span></div>
         ))}
@@ -44,7 +44,7 @@ export default function MarginCalculator({ tokenName, tokenSymbol, tokenPrice, m
         </div>
       </div>
 
-      <div className="brutal-inset mb-5 !border-loss p-4">
+      <div className="glass-input mb-5 border-loss p-4">
         <div className="mb-2 flex items-center gap-2"><div className="h-2 w-2 rounded-full bg-loss" /><span className="text-xs font-bold text-loss">Liquidation</span></div>
         {[["Price", `$${calc.liquidationPrice.toFixed(6)}`], ["Max drop", `-${calc.maxDropPercent.toFixed(2)}%`]].map(([label, value]) => (
           <div key={label} className="flex items-center justify-between py-1 text-xs"><span className="text-muted">{label}</span><span className="font-mono font-bold text-loss">{value}</span></div>
@@ -58,7 +58,7 @@ export default function MarginCalculator({ tokenName, tokenSymbol, tokenPrice, m
             const pnl = calc.coinsPurchased * tokenPrice * factor - calc.debtAmount - calc.modal;
             const roi = (pnl / calc.modal) * 100;
             return (
-              <div key={label} className="brutal-inset p-3 text-center">
+              <div key={label} className="glass-input p-3 text-center">
                 <div className="text-xs text-muted">If {label}</div>
                 <div className={`mt-1 font-mono text-sm font-bold ${pnl >= 0 ? "text-profit" : "text-loss"}`}>{pnl >= 0 ? "+" : ""}{pnl.toFixed(2)}</div>
                 <div className="font-mono text-xs text-muted">ROI {roi >= 0 ? "+" : ""}{roi.toFixed(1)}%</div>
@@ -68,7 +68,7 @@ export default function MarginCalculator({ tokenName, tokenSymbol, tokenPrice, m
         </div>
       </div>
 
-      <button onClick={() => onOpenPosition?.(modal, leverage)} className="brutal-sm w-full !bg-accent py-3 text-sm font-bold !text-background transition-transform hover:-translate-y-0.5 active:translate-y-0.5">
+      <button onClick={() => onOpenPosition?.(modal, leverage)} className="glass w-full bg-accent py-3 text-sm font-bold text-white transition-colors hover:shadow-[0_0_24px_rgba(99,102,241,0.35)]">
         Open Position — ${modal} × {leverage}%
       </button>
     </div>
