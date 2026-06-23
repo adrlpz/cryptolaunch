@@ -121,6 +121,20 @@ export default function LaunchPage() {
           </section>
 
           <section className="glass p-6">
+            <h2 className="mb-4 text-base font-bold">Token Details</h2>
+            <div className="space-y-4">
+              <div><label className={lbl}>Description</label><textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3} className={inp} placeholder="Describe your token, its purpose, and roadmap..." /></div>
+              <div><label className={lbl}>Logo URL</label><input type="url" value={form.logoUrl} onChange={(e) => setForm({ ...form, logoUrl: e.target.value })} className={inp} placeholder="https://example.com/logo.png" /></div>
+              <div className="grid gap-4 md:grid-cols-2">
+                <div><label className={lbl}>Website</label><input type="url" value={form.websiteUrl} onChange={(e) => setForm({ ...form, websiteUrl: e.target.value })} className={inp} placeholder="https://yoursite.com" /></div>
+                <div><label className={lbl}>Twitter / X</label><input type="text" value={form.twitterUrl} onChange={(e) => setForm({ ...form, twitterUrl: e.target.value })} className={inp} placeholder="https://x.com/yourhandle" /></div>
+              </div>
+              <div><label className={lbl}>Telegram</label><input type="text" value={form.telegramUrl} onChange={(e) => setForm({ ...form, telegramUrl: e.target.value })} className={inp} placeholder="https://t.me/yourgroup" /></div>
+              {form.logoUrl && <div className="glass-input p-3 text-center"><img src={form.logoUrl} alt="Token logo preview" className="mx-auto h-16 w-16 rounded-full object-cover" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} /></div>}
+            </div>
+          </section>
+
+          <section className="glass p-6">
             <h2 className="mb-4 text-base font-bold">Bonding Curve</h2>
             <div className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2">

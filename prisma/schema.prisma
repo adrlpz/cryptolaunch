@@ -41,6 +41,12 @@ model LaunchpadProject {
   availableSupply       Decimal  @map("available_supply") @db.Decimal(30, 8)
   chain                 String   @db.VarChar(50)
   maxLeveragePercent    Int      @default(50) @map("max_leverage_percent")
+
+  // Token metadata
+  description           String?  @db.Text
+  logoUrl               String?  @map("logo_url") @db.VarChar(500)
+  websiteUrl            String?  @map("website_url") @db.VarChar(500)
+  socialLinks           Json?    @map("social_links")
   marginFeePercent      Decimal  @default(5.00) @map("margin_fee_percent") @db.Decimal(5, 2)
   safetyMarginPercent   Decimal  @default(5.00) @map("safety_margin_percent") @db.Decimal(5, 2)
 

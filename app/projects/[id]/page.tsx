@@ -17,6 +17,8 @@ interface Project {
   id: string; tokenName: string; tokenSymbol: string; contractAddress: string | null;
   tokenPrice: number; totalSupply: number; availableSupply: number; chain: string;
   maxLeveragePercent: number; lpStatus: string; status: string; launchDate: string;
+  description?: string | null; logoUrl?: string | null; websiteUrl?: string | null;
+  socialLinks?: { twitter?: string; telegram?: string } | null;
   liquidityPool: PoolData | null; bondingCurveAddress?: string | null;
 }
 
@@ -63,13 +65,25 @@ export default function ProjectDetailPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10">
-      <div className="mb-8 flex items-center gap-4">
-        <div className="glass-input flex h-12 w-12 items-center justify-center text-lg font-bold text-accent">{project.tokenSymbol[0]}</div>
-        <div className="min-w-0 flex-1">
-          <p className="font-mono text-xs uppercase tracking-wider text-muted">{project.chain.toUpperCase()}</p>
-          <h1 className="text-3xl font-bold">{project.tokenName} <span className="text-lg text-muted">${project.tokenSymbol}</span></h1>
+      <div className="mb-8">
+        <div className="flex items-center gap-4">
+          {project.logoUrl ? (
+            <img src={project.logoUrl} alt={project.tokenName} className="h-14 w-14 rounded-xl object-cover" />
+          ) : (
+            <div className="glass-input flex h-14 w-14 items-center justify-center text-lg font-bold text-accent">{project.tokenSymbol[0]}</div>
+          )}
+          <div className="min-w-0 flex-1">
+            <p className="font-mono text-xs uppercase tracking-wider text-muted">{project.chain.toUpperCase()}</p>
+            <h1 className="text-3xl font-bold">{project.tokenName} <span className="text-lg text-muted">${project.tokenSymbol}</span></h1>
+          </div>
+          <span className={`rounded-lg border-2 px-3 py-1.5 text-xs font-bold ${project.status === "active" ? "border-profit bg-profit-subtle text-profit" : project.status === "upcoming" ? "border-accent bg-accent-subtle text-accent" : "border-edge text-muted"}`}>{project.status.toUpperCase()}</span>
         </div>
-        <span className={`rounded-lg border-2 px-3 py-1.5 text-xs font-bold ${project.status === "active" ? "border-profit bg-profit-subtle text-profit" : project.status === "upcoming" ? "border-accent bg-accent-subtle text-accent" : "border-edge text-muted"}`}>{project.status.toUpperCase()}</span>
+        {project.description && <p className="mt-3 text-sm leading-relaxed text-muted">{project.description}</p>}
+        <div className="mt-3 flex gap-3">
+          {project.websiteUrl && <a href={project.websiteUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-accent hover:underline">Website</a>}
+          {project.socialLinks?.twitter && <a href={project.socialLinks.twitter} target="_blank" rel="noopener noreferrer" className="text-xs text-accent hover:underline">Twitter</a>}
+          {project.socialLinks?.telegram && <a href={project.socialLinks.telegram} target="_blank" rel="noopener noreferrer" className="text-xs text-accent hover:underline">Telegram</a>}
+        </div>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
